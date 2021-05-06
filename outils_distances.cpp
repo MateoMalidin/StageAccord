@@ -3,81 +3,87 @@
 //autre piste : normaliser les désaccords contenus dans la table de confusion et les utiliser comme
 //coefficient de similarité entre les classes
 
-
 //mieux ? demi-somme des sommes des désaccords autres que c2 concernant c1
 //divisé par  les désaccords concernant c1 et réciproquement
-float calcul_distance4(int c1,int c2,int TConf[MAXCL][MAXCL],int nbC) {
-    if (c1==c2)
-        return 1;
-    else {
-        int S1=0,S2=0;
-        float res;
-        for (int j=0;j<nbC;j++) {
-            if (j!=c1) S1+=TConf[c1][j];
-            if (j!=c2) S2+=TConf[c2][j];
-        }
-        //res=0.5*((1.0*(S1-TConf[c1][c2]))/(1.0*S1)+(1.0*(S2-TConf[c2][c1]))/(1.0*S2));//distance
-        res=0.5*((1.0*TConf[c1][c2])/(1.0*S1)+(1.0*TConf[c2][c1])/(1.0*S2));//similarite
-        return res;
+float calcul_distance4(int c1, int c2, int TConf[MAXCL][MAXCL], int nbC) {
+  if (c1 == c2)
+    return 1;
+  else {
+    int S1 = 0, S2 = 0;
+    float res;
+    for (int j = 0; j < nbC; j++) {
+      if (j != c1)
+        S1 += TConf[c1][j];
+      if (j != c2)
+        S2 += TConf[c2][j];
     }
+    //res=0.5*((1.0*(S1-TConf[c1][c2]))/(1.0*S1)+(1.0*(S2-TConf[c2][c1]))/(1.0*S2));//distance
+    res = 0.5 * ((1.0 * TConf[c1][c2]) / (1.0 * S1) + (1.0 * TConf[c2][c1]) / (1.0 * S2)); //similarite
+    return res;
+  }
 }
 
 //calcul basé sur les taux de désaccords entre classes
-float calcul_distances3(int TConf[MAXCL][MAXCL],int nbC,
-                        float Tdist[MAXCL][MAXCL]) {
-    float Ttauxdesa[nbC][nbC];
-    for (int c1=0;c1<nbC;c1++) {
-        int S=0;
-        for (int c2=0;c2<nbC;c2++)
-            if (c1!=c2) S+=TConf[c1][c2];
-        for (int c2=0;c2<nbC;c2++)
-            if (c1==c2) Ttauxdesa[c1][c2]=0;
-            else Ttauxdesa[c1][c2]=(1.0*TConf[c1][c2])/S;
-    }
-    //affichage Tconf
-    cout << "table distance3\n";
-    for (int c1=0;c1<nbC;c1++){
-      for (int c2=0;c2<nbC;c2++)
-        printf("%5.2f  ",Tdist[c1][c2]);
+float calcul_distances3(int TConf[MAXCL][MAXCL], int nbC, float Tdist[MAXCL][MAXCL]) {
+  float Ttauxdesa[nbC][nbC];
+  for (int c1 = 0; c1 < nbC; c1++) {
+    int S = 0;
+    for (int c2 = 0; c2 < nbC; c2++)
+      if (c1 != c2)
+        S += TConf[c1][c2];
+    for (int c2 = 0; c2 < nbC; c2++)
+      if (c1 == c2)
+        Ttauxdesa[c1][c2] = 0;
+      else
+        Ttauxdesa[c1][c2] = (1.0 * TConf[c1][c2]) / S;
+  }
+  //affichage Tconf
+  cout << "table distance3\n";
+  for (int c1 = 0; c1 < nbC; c1++) {
+    for (int c2 = 0; c2 < nbC; c2++)
+      printf("%5.2f  ", Tdist[c1][c2]);
       cout << endl;
   }
-
-    for (int c1=0;c1<nbC;c1++)
-      for (int c2=0;c2<nbC;c2++)
-        if (c1==c2) Tdist[c1][c2]=0;
-        else Tdist[c1][c2]=1-Ttauxdesa[c1][c2];
+  for (int c1 = 0; c1 < nbC; c1++)
+    for (int c2 = 0; c2 < nbC; c2++)
+      if (c1 == c2)
+        Tdist[c1][c2] = 0;
+      else
+        Tdist[c1][c2] = 1 - Ttauxdesa[c1][c2];
 }
 
 //il reste deux choix 3 ou 4 (le meilleur)
-void distance(int TConf[MAXCL][MAXCL],int nbC,float Tdist[MAXCL][MAXCL],int choix) {
-    if (choix==4) {
-        for (int c1=0;c1<nbC;c1++)
-                for (int c2=0;c2<nbC;c2++)
-                 Tdist[c1][c2]=calcul_distance4(c1,c2,TConf,nbC);
-        }
-    else
-        calcul_distances3(TConf,nbC,Tdist);
-   //affichage de la table des distances
-   cout << "similarite 4\n";
-   /*for (int c1=0;c1<nbC;c1++){
+void distance(int TConf[MAXCL][MAXCL], int nbC, float Tdist[MAXCL][MAXCL], int choix) {
+  if (choix == 4) {
+    for (int c1 = 0; c1 < nbC; c1++)
+      for (int c2 = 0; c2 < nbC; c2++)
+        Tdist[c1][c2] = calcul_distance4(c1, c2, TConf, nbC);
+  }
+  else
+    calcul_distances3(TConf, nbC, Tdist);
+  //affichage de la table des distances
+  cout << "similarite 4\n";
+    /*for (int c1=0;c1<nbC;c1++){
       for (int c2=0;c2<nbC;c2++)
         printf("%5.2f  ",Tdist[c1][c2]);
       cout << endl;
     } */
 }
+
 //autre piste : normaliser les désaccords contenus dans la table de confusion et les utiliser comme
 //coefficient de similarité entre les classes
-void confusionnormalisee(int TConf[MAXCL][MAXCL],int nbC,float Tdist[MAXCL][MAXCL]) {
-    int S=0;
-    for (int c1=0;c1<nbC;c1++)
-        for (int c2=0;c2<nbC;c2++)
-           S+=TConf[c1][c2];
+void confusionnormalisee(int TConf[MAXCL][MAXCL], int nbC, float Tdist[MAXCL][MAXCL]) {
+  int S = 0;
+  for (int c1 = 0; c1 < nbC; c1++)
+    for (int c2 = 0; c2 < nbC; c2++)
+      S += TConf[c1][c2];
   //  cout << "S=" << S << endl;
-    for (int c1=0;c1<nbC;c1++)
-        for (int c2=0;c2<nbC;c2++) {
-             Tdist[c1][c2]=(1.0*TConf[c1][c2])/(1.0*S);
-             if (Tdist[c1][c2]<0) Tdist[c1][c2]=0;
-        }
+  for (int c1 = 0; c1 < nbC; c1++)
+    for (int c2 = 0; c2 < nbC; c2++) {
+      Tdist[c1][c2] = (1.0 * TConf[c1][c2]) / (1.0 * S);
+      if (Tdist[c1][c2] < 0)
+        Tdist[c1][c2] = 0;
+    }
    //affichage de la table de confusion normalisée
  /* cout << "table de confusion normalisée\n";
    for (int c1=0;c1<nbC;c1++){
@@ -87,41 +93,42 @@ void confusionnormalisee(int TConf[MAXCL][MAXCL],int nbC,float Tdist[MAXCL][MAXC
     } */
 }
 
-void SLSC(float Tdist[MAXCL][MAXCL],int nbC,float SLignes[],float SCol[],float & Sdiag){
-    float SC,SL;
-    Sdiag=0;
-    for (int i=0;i<nbC;i++) {
-        Sdiag+=Tdist[i][i];
-        SC=0;SL=0;
-        for (int j=0;j<nbC;j++){
-            SC+=Tdist[j][i];
-            SL+=Tdist[i][j];
-        }
-        SLignes[i]=SL;
-        SCol[i]=SC;
+void SLSC(float Tdist[MAXCL][MAXCL], int nbC, float SLignes[], float SCol[], float & Sdiag) {
+  float SC, SL;
+  Sdiag = 0;
+  for (int i = 0;i < nbC; i++) {
+    Sdiag += Tdist[i][i];
+    SC = 0;
+    SL = 0;
+    for (int j = 0; j < nbC; j++) {
+      SC += Tdist[j][i];
+      SL += Tdist[i][j];
     }
+    SLignes[i] = SL;
+    SCol[i] = SC;
+  }
 }
 
 //distance cosinus entre classes
-float similaritecos1(int Taboccur[MAXIT][MAXCL],int c1,int c2,int nbIt){
-    float res;
-    float num=0,v1car=0,v2car=0;
-    for (int it=0;it<nbIt;it++){
-        v1car+=1.0*Taboccur[it][c1]*Taboccur[it][c1];
-        v2car+=1.0*Taboccur[it][c2]*Taboccur[it][c2];
-        num+=1.0*Taboccur[it][c1]*Taboccur[it][c2];
-    }
-    res=(num/(sqrt(v1car)*sqrt(v2car)));
-    return res;
+float similaritecos1(int Taboccur[MAXIT][MAXCL], int c1, int c2, int nbIt) {
+  float res;
+  float num = 0, v1car = 0, v2car = 0;
+  for (int it = 0; it < nbIt; it++) {
+    v1car += 1.0 * Taboccur[it][c1] * Taboccur[it][c1];
+    v2car += 1.0 * Taboccur[it][c2] * Taboccur[it][c2];
+    num+=1.0 * Taboccur[it][c1] * Taboccur[it][c2];
+  }
+  res = (num / (sqrt(v1car) * sqrt(v2car)));
+  return res;
 }
 
-void distancecosinus(int T[MAXA][MAXIT],int nbAR,int nbIt,int nbC,float Tdist[MAXCL][MAXCL]) {
-    int Taboccur[MAXIT][MAXCL],choix;
-    //construction de la table des occurrences des classes par item
-    for (int it=0;it<nbIt;it++){
-        for (int c=0;c<nbC;c++) Taboccur[it][c]=0;
-        for (int a=0;a<nbAR;a++) {
-            choix=T[a][it];
+void distancecosinus(int T[MAXA][MAXIT], int nbAR, int nbIt, int nbC, float Tdist[MAXCL][MAXCL]) {
+  int Taboccur[MAXIT][MAXCL], choix;
+  //construction de la table des occurrences des classes par item
+  for (int it = 0; it < nbIt; it++) {
+    for (int c = 0; c < nbC; c++) Taboccur[it][c] = 0;
+    for (int a = 0; a < nbAR; a++) {
+            choix = T[a][it];
             Taboccur[it][choix]++;
         }
     }
