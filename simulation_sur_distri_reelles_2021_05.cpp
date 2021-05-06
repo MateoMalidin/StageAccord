@@ -516,89 +516,108 @@ void serie_expes(string corpus, int nbval,int nb,int nbG,int RefIni[],int nbIt,i
 
 
 int main(int n,char * param[]) {
-    int nbC=5;//nb de classes d'annotation ; 5 par défaut ; modifier à 9 pour les entités nommées à 3 éventuellement pour opinion et émotion
-    srand(time(NULL));
-    int T[MAXIT][MAXA];//le tableau des annotations : une ligne par observable annoté
-    int nbAR=0,nbIt=0;//nb d'annotateurs réels et nb d'observables
-    int nbA=5;//nb d'annotateurs dans les groupes simulés
-
-    //LECTURE 5 classes
-    lecture_corpus(param[1],nbC,nbAR,nbIt,T);//lecture d'un corpus cf. outils_distri_reelles.cpp
-    affiche_annot(T,nbIt,nbAR);
-    //CALCULS SUR DISTRI Réelles
-    int Ref[MAXIT];
-    int TE[MAXIT];//le nombre d'erreurs par item
-    float TEIt[MAXIT][MAXCL];// le tableau du %tage d'erreurs par classe
-    int TConfusion[MAXCL][MAXCL];
-    etude_distri_reelle(T,nbAR,nbIt,nbC,Ref,TE,TEIt);
-    //affichage TEIt
-    for (int it=0;it<nbIt;it++) {
-      for (int c=0;c<nbC;c++)
-	cout << TEIt[it][c] << "  ";
-      cout << endl;
+    string arg = param[1];
+    int size;
+    string args[] = {"", "", "", "", ""};
+    if (arg == "all") {
+      size = 5;
+      args[0] = "coref";
+      args[1] = "similarite";
+      args[2] = "opinion";
+      args[3] = "emotion";
+      args[4] = "newsletter";
     }
-    table_confusion_classes(T,nbAR,nbIt,nbC,TConfusion);
-    float Tdist[MAXCL][MAXCL];
-    confusionnormalisee(TConfusion,nbC,Tdist);
-    //distancegrossiere(nbC,Tdist);
-    //affichage distances annotations réelles
-    float SLignes[nbC],SCol[nbC],Sdiag;
-    SLSC(Tdist,nbC,SLignes,SCol,Sdiag);
-    /* //affichage confusion
-    cout << "tableau confusion entre classes\n";
-    for (int c1=0;c1<nbC;c1++) {
+    else {
+      size = 1;
+      args[0] = arg;
+    }
+    int c = 0;
+    while (c < size && args[c] != "") {
+      int nbC=5;//nb de classes d'annotation ; 5 par défaut ; modifier à 9 pour les entités nommées à 3 éventuellement pour opinion et émotion
+      srand(time(NULL));
+      int T[MAXIT][MAXA];//le tableau des annotations : une ligne par observable annoté
+      int nbAR=0,nbIt=0;//nb d'annotateurs réels et nb d'observables
+      int nbA=5;//nb d'annotateurs dans les groupes simulés
+
+      //LECTURE 5 classes
+      lecture_corpus(args[c],nbC,nbAR,nbIt,T);//lecture d'un corpus cf. outils_distri_reelles.cpp
+      affiche_annot(T,nbIt,nbAR);
+      //CALCULS SUR DISTRI Réelles
+      int Ref[MAXIT];
+      int TE[MAXIT];//le nombre d'erreurs par item
+      float TEIt[MAXIT][MAXCL];// le tableau du %tage d'erreurs par classe
+      int TConfusion[MAXCL][MAXCL];
+      etude_distri_reelle(T,nbAR,nbIt,nbC,Ref,TE,TEIt);
+      //affichage TEIt
+      for (int it=0;it<nbIt;it++) {
+        for (int c=0;c<nbC;c++)
+  	cout << TEIt[it][c] << "  ";
+        cout << endl;
+      }
+      table_confusion_classes(T,nbAR,nbIt,nbC,TConfusion);
+      float Tdist[MAXCL][MAXCL];
+      confusionnormalisee(TConfusion,nbC,Tdist);
+      //distancegrossiere(nbC,Tdist);
+      //affichage distances annotations réelles
+      float SLignes[nbC],SCol[nbC],Sdiag;
+      SLSC(Tdist,nbC,SLignes,SCol,Sdiag);
+      /* //affichage confusion
+      cout << "tableau confusion entre classes\n";
+      for (int c1=0;c1<nbC;c1++) {
+          for (int c2=0;c2<nbC;c2++)
+              printf("%.6f ",Tdist[c1][c2]);
+          printf(" | %.6f\n",SLignes[c1]);
+      }
+      for (int c2=0;c2<nbC;c2++) printf(" ----- ") ; cout << endl;
+      for (int c2=0;c2<nbC;c2++) printf("%.6f ",SLignes[c2]);
+      printf(" | %.6f\n",Sdiag);
+      */
+      float sim_uniforme,moy, sigma;
+      int nbdesa=0;
+      mesuresrepartitiondesaccords(TConfusion,T,nbC,nbIt,nbAR,sim_uniforme,moy,sigma);
+      float Tdist2[MAXCL][MAXCL];
+      Tdist2Tdist2(Tdist,nbC,Tdist2);
+
+       //affichage Tdist2 annotations réelles
+      cout << "Tdist2\n";
+      for (int c1=0;c1<nbC-1;c1++) {
         for (int c2=0;c2<nbC;c2++)
-            printf("%.6f ",Tdist[c1][c2]);
-        printf(" | %.6f\n",SLignes[c1]);
+          if (c2<=c1) printf("%s  ","_______");
+         else printf("%f ",Tdist2[c1][c2]);
+        cout << endl;
+      }
+
+      //ANNOTATIONS FICTIVES
+      //float tauxErparAnnot=0.25,sigmatauxEr=0.05;
+
+      vector<int> nbErparA;
+      nbErparA.resize(nbA);
+      int Tabannot[nbA][MAXIT];
+
+      int nbG=100; //nb de groupes auquel on compare un groupe, 100 par défaut
+      int nb=50; //à revoir
+
+       // SERIES d'expé
+      int choix1=1, choix2=1;
+
+      //I - Variations mesure d'accords/taux d'écart entre Rf
+      float  sigmatauxEr=0.05;
+
+      // pour tester
+      //float TabtauxErparAnnot[2]={0.2};
+      //int nbtests=1;
+      // fin pour tester
+
+      //float TabtauxErparAnnot[12]={0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.6,0.7};
+      int nbtests=10;
+      float TabtauxErparAnnot[]={0.075,0.1,0.125,0.15,0.175,0.2,0.25,0.3,0.35,0.4};
+      float moymtauxErRef[nbtests],moysigmatauxErRef[nbtests],moymtauxconf[nbtests],moyalpha[nbtests],
+        moyalphaconf[nbtests],moykappa[nbtests],moycos_uniforme[nbtests],moydistri_hasard[nbtests],
+            moycos_distri_hasard[nbtests],cosmoytaux_distri_hasard[nbtests];
+      serie_expes(args[c], nbtests,nb,nbG,Ref,nbIt,nbC,TE,TEIt,nbA,TabtauxErparAnnot,sigmatauxEr,choix1,choix2,
+                  moymtauxErRef,moysigmatauxErRef,moymtauxconf,moyalpha,moyalphaconf,moykappa,
+  		moycos_uniforme,moydistri_hasard,moycos_distri_hasard,cosmoytaux_distri_hasard);
+      c++;
     }
-    for (int c2=0;c2<nbC;c2++) printf(" ----- ") ; cout << endl;
-    for (int c2=0;c2<nbC;c2++) printf("%.6f ",SLignes[c2]);
-    printf(" | %.6f\n",Sdiag);
-    */
-    float sim_uniforme,moy, sigma;
-    int nbdesa=0;
-    mesuresrepartitiondesaccords(TConfusion,T,nbC,nbIt,nbAR,sim_uniforme,moy,sigma);
-    float Tdist2[MAXCL][MAXCL];
-    Tdist2Tdist2(Tdist,nbC,Tdist2);
-
-     //affichage Tdist2 annotations réelles
-    cout << "Tdist2\n";
-    for (int c1=0;c1<nbC-1;c1++) {
-      for (int c2=0;c2<nbC;c2++)
-        if (c2<=c1) printf("%s  ","_______");
-       else printf("%f ",Tdist2[c1][c2]);
-      cout << endl;
-    }
-
-    //ANNOTATIONS FICTIVES
-    //float tauxErparAnnot=0.25,sigmatauxEr=0.05;
-
-    vector<int> nbErparA;
-    nbErparA.resize(nbA);
-    int Tabannot[nbA][MAXIT];
-
-    int nbG=100;//nb de groupes auquel on compare un groupe, 100 par défaut
-    int nb=50;//à revoir
-
-     // SERIES d'expé
-    int choix1=1,choix2=1;
-
-    //I - Variations mesure d'accords/taux d'écart entre Rf
-    float  sigmatauxEr=0.05;
-
-    // pour tester
-    //float TabtauxErparAnnot[2]={0.2};
-    //int nbtests=1;
-    // fin pour tester
-
-    //float TabtauxErparAnnot[12]={0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.6,0.7};
-    int nbtests=10;
-    float TabtauxErparAnnot[]={0.075,0.1,0.125,0.15,0.175,0.2,0.25,0.3,0.35,0.4};
-    float moymtauxErRef[nbtests],moysigmatauxErRef[nbtests],moymtauxconf[nbtests],moyalpha[nbtests],
-      moyalphaconf[nbtests],moykappa[nbtests],moycos_uniforme[nbtests],moydistri_hasard[nbtests],
-          moycos_distri_hasard[nbtests],cosmoytaux_distri_hasard[nbtests];
-    serie_expes(param[1], nbtests,nb,nbG,Ref,nbIt,nbC,TE,TEIt,nbA,TabtauxErparAnnot,sigmatauxEr,choix1,choix2,
-                moymtauxErRef,moysigmatauxErRef,moymtauxconf,moyalpha,moyalphaconf,moykappa,
-		moycos_uniforme,moydistri_hasard,moycos_distri_hasard,cosmoytaux_distri_hasard);
     return 0;
 }
