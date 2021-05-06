@@ -327,7 +327,9 @@ float cosinus_vect_entier(int v1[],int v2[],int nbIt){
         num+=1.0*v1[it]*v2[it];
     }
     float res=(num/(sqrt(v1car)*sqrt(v2car)));
+    return res;
 }
+
 float distance_vect_entier(int v1[],int v2[],int nbIt){
     float res=0;
     for (int it=0;it<nbIt;it++) {
