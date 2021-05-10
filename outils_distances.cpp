@@ -133,26 +133,30 @@ void distancecosinus(int T[MAXA][MAXIT], int nbAR, int nbIt, int nbC, float Tdis
         }
     }
     //calcul des distances entre classes
-    for (int c1=0;c1<nbC;c1++)
-       for (int c2=c1;c2<nbC;c2++) {
-         Tdist[c1][c2]=similaritecos1(Taboccur,c1,c2,nbIt);
-         if (c2!=c1) Tdist[c2][c1]=Tdist[c1][c2];
+    for (int c1 = 0; c1 < nbC; c1++)
+      for (int c2 = c1; c2 < nbC; c2++) {
+        Tdist[c1][c2] = similaritecos1(Taboccur, c1, c2, nbIt);
+        if (c2 != c1)
+          Tdist[c2][c1] = Tdist[c1][c2];
        }
 }
 
-void distancegrossiere(int nbC,float Tdist[MAXCL][MAXCL]) {
-    for (int c1=0;c1<nbC;c1++)
-       for (int c2=0;c2<nbC;c2++)
-        if (c2==c1) Tdist[c1][c2]=0; else Tdist[c1][c2]=1;
+void distancegrossiere(int nbC, float Tdist[MAXCL][MAXCL]) {
+  for (int c1 = 0; c1 < nbC; c1++)
+    for (int c2 = 0; c2 < nbC; c2++)
+      if (c2 == c1)
+        Tdist[c1][c2] = 0;
+      else
+        Tdist[c1][c2] = 1;
 }
 
 // calcul de la similarité : répartition uniforme des désaccords avec la répartition réelle
-float similaritecos2(vector<float> v1,vector<float> v2,int nbIt) {
-    float num=0,v1car=0,v2car=0;
-    for (int it=0;it<nbIt;it++){
-        v1car+=1.0*v1[it]*v1[it];
-        v2car+=1.0*v2[it]*v2[it];
-        num+=1.0*v1[it]*v2[it];
+float similaritecos2(vector<float> v1, vector<float> v2, int nbIt) {
+  float num = 0, v1car = 0, v2car = 0;
+  for (int it = 0; it < nbIt; it++) {
+    v1car += 1.0 * v1[it] * v1[it];
+    v2car += 1.0 * v2[it] * v2[it];
+        num += 1.0 * v1[it] * v2[it];
     }
     float res=(num/(sqrt(v1car)*sqrt(v2car)));
     return res;
@@ -380,25 +384,28 @@ void distance_distri_item(int TA[MAXIT][MAXA],int nbA,int nbIt,int nbC,
 // dans le cas de 5 annotateurs et 5 classes, on a 7 possibilités (Tval)
 //     1 - vecteur qui correspond au cas d'une annotation au hasard (Tcomb)
 //     2 - vecteur observé dans l'annotation réelle
-float cosinus_taux_distri_hasard(int T[MAXIT][MAXA],int nbA,int nbIt,int nbC) {
-    if ((nbC==5)&&(nbA==5)) {
-       int Tcomb[7]={1,20,40,120,180,240,24};
-       int Treel[7]={0,0,0,0,0,0,0};
-       int Tval[7]={0,4,6,7,8,9,10};
-       for (int it=0;it<nbIt;it++) {
-            int nbdes=0;
-            for (int a1=0;a1<nbA;a1++)
-                for (int a2=a1+1;a2<nbA;a2++)
-                    if (T[it][a1]!=T[it][a2]) nbdes++;
-            int ind=0;
-            while ((ind<7)&&(nbdes>Tval[ind])) ind++;
-            if (ind>=7) cout << "bug cosinus_taux_distri_hasard\n";
-            else (Treel[ind])++;
-       }
+float cosinus_taux_distri_hasard(int T[MAXIT][MAXA], int nbA, int nbIt, int nbC) {
+  if ((nbC == 5) && (nbA == 5)) {
+    int Tcomb[7] = {1, 20, 40, 120, 180, 240, 24};
+    int Treel[7] = {0, 0, 0, 0, 0, 0, 0};
+    int Tval[7] = {0, 4, 6, 7, 8, 9, 10};
+    for (int it = 0; it < nbIt; it++) {
+      int nbdes = 0;
+      for (int a1 = 0; a1 < nbA; a1++)
+        for (int a2 = a1 + 1; a2 < nbA; a2++)
+          if (T[it][a1] != T[it][a2])
+            nbdes++;
+      int ind = 0;
+      while ((ind < 7) && (nbdes > Tval[ind])) ind++;
+        if (ind >= 7)
+          cout << "bug cosinus_taux_distri_hasard\n";
+        else
+          (Treel[ind])++;
+    }
        return cosinus_vect_entier(Tcomb,Treel,7);
-    }
-    else {
-        cout << "pas de calcul prévu pour cosinus_taux_distri_hasard\n ";
+  }
+  else {
+    cout << "pas de calcul prévu pour cosinus_taux_distri_hasard\n ";
         return 0;
-    }
+  }
 }

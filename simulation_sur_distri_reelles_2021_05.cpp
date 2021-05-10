@@ -157,10 +157,7 @@ void etude_distri_reelle(int T[MAXIT][MAXA],int nbAR,int nbIt,int nbC,int Ref[],
 /* FIN ETUDE DISTRIBUTION DES DESACCORDS REELS */
 
 
-
-
 // II - SIMULATIONS : DISTRIBUTION DES ERREURS //
-
 
 
 //on suppose que le nb de désaccords par annotateurs avec la ref initiale des données réelles suit une loi normale
@@ -432,7 +429,7 @@ void nbfois_unplusnbGgroupe(int nb,int nbG,int RefIni[],int nbIt,int nbC,int TE[
         moysigmatauxErRef+=0;
         moymtauxconf+=mtauxconf;
         moyalpha+=alpha;
-	moykappa+=kappa;
+	      moykappa+=kappa;
         moyalphaconf+=alphaconf;
         moycos_uniforme+=cos_uniforme;
         moydistri_hasard+=distri_hasard;
@@ -480,14 +477,22 @@ void affiche_res_series(int nbval,float tauxErparAnnot[],float moymtauxErRef[],f
 void write_res_series(string corpus, int nbval, float moykappa[], float moyalpha[], float moymtauxErRef[], float cosmoytaux_distri_hasard[]) {
   string nomfich1 = "./res/kappa_" + corpus + ".csv";
   string nomfich2 = "./res/alpha_" + corpus + ".csv";
+  string nomfich3 = "./res/cosalpha_" + corpus + ".csv";
+  string nomfich4 = "./res/coskappa_" + corpus + ".csv";
   ofstream file1(nomfich1.c_str());
   ofstream file2(nomfich2.c_str());
-  if (file1 && file2) {
+  ofstream file3(nomfich3.c_str());
+  ofstream file4(nomfich4.c_str());
+  if (file1 && file2 && file3 && file4) {
     file1 << "kappa,taux,cos" << endl;
-    file2 << "alpha,taux,cos" << endl;
+    file2 << "alpha,taux" << endl;
+    file3 << "cosalpha,taux" << endl;
+    file4 << "coskappa,taux" << endl;
     for (int nb = 0; nb < nbval; nb++) {
-      file1 << moykappa[nb] << "," << moymtauxErRef[nb] << "," << cosmoytaux_distri_hasard[nb] << endl;
-      file2 << moyalpha[nb] << "," << moymtauxErRef[nb] << "," << cosmoytaux_distri_hasard[nb] << endl;
+      file1 << moykappa[nb] << "," << moymtauxErRef[nb]  << endl;
+      file2 << moyalpha[nb] << "," << moymtauxErRef[nb] << endl;
+      file3 << (moyalpha[nb] * (1 - cosmoytaux_distri_hasard[nb])) << "," << moymtauxErRef[nb] << endl;
+      file4 << (moykappa[nb] * (1 - cosmoytaux_distri_hasard[nb])) << "," << moymtauxErRef[nb] << endl;
     }
   }
   else
@@ -594,8 +599,8 @@ int main(int n,char * param[]) {
       nbErparA.resize(nbA);
       int Tabannot[nbA][MAXIT];
 
-      int nbG=100; //nb de groupes auquel on compare un groupe, 100 par défaut
-      int nb=50; //à revoir
+      int nbG = 100; //nb de groupes auquel on compare un groupe, 100 par défaut
+      int nb = 50; //à revoir
 
        // SERIES d'expé
       int choix1=1, choix2=1;
