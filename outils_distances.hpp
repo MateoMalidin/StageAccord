@@ -24,10 +24,14 @@ float cosinus_uniforme(float Tdist2[MAXCL][MAXCL], int nbC);
 int cmpfunct(const void* a, const void* b);
 void nb_desaccords_par_item(int TA[MAXIT][MAXA], int nbA, int nbIt, int Vreel[]);
 void vect_desaccords_annotation_aleatoire(int nbA, int nbIt, int nbC, int Vrand[]);
+int min(int x, int y);
+float moy_vect_entier(int v[], int nbIt);
 float cosinus_vect_entier(int v1[], int v2[], int nbIt);
+float histointersection_vect_entier(int v1[], int v2[], int nbIt);
+float histocorrelation_vect_entier(int v1[], int v2[], int nbIt);
 float distance_vect_entier(int v1[], int v2[], int nbIt);
 float distance2_vect_entier(int v1[], int v2[], int nbIt);
 void distance_distri_item(int TA[MAXIT][MAXA], int nbA, int nbIt, int nbC, float& distance_annot_hasard, float& cosinus_annot_hasard);
-float cosinus_taux_distri_hasard(int T[MAXIT][MAXA], int nbA, int nbIt, int nbC);
+float distance_taux_distri_hasard(int T[MAXIT][MAXA], int nbA, int nbIt, int nbC);
 
 #endif

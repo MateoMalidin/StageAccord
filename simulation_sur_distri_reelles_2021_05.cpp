@@ -188,9 +188,6 @@ void nberreursparannot(int nbErparA[],int nbA,float moyErparAnnot,float sigmaA,i
 
 //la fonction rend l'indice d'un item pour lequel on aura un écart à la référence
 // avec prise en compte de la distribution des désaccords sur un item donné
-int min(int a,int b) {
-  if (a<=b) return a; else return b;
-}
 
 
 int tirageErreur(int Ref,float TEIt[],int nbC) {
@@ -372,7 +369,7 @@ void unplusnbGgroupe(int nbG,int RefIni[],int nbIt,int nbC,int TE[],float TEIt[]
 		     float & mtauxErRef,float & sigmatauxErRef,float & mtauxconf,
 		     float & alphaR,float & alphaconf,float & kappa,float & cos_uniforme,
 		     float & distri_hasard,
-		     float & cos_distri_hasard,float & costaux_distri_hasard){
+		     float & distance_distri_hasard,float & distancetaux_distri_hasard) {
   //cout << "\n\n Annotations fictives\n";
   float moyA=tauxErparAnnot*nbIt;
   float sigmaA=sigmatauxEr*nbIt;
@@ -393,7 +390,7 @@ void unplusnbGgroupe(int nbG,int RefIni[],int nbIt,int nbC,int TE[],float TEIt[]
   //cos_uniforme=cosinus_uniforme(Tdist2,nbC);//distance à une confusion uniforme entre classes
   cos_uniforme=0;
   //distance_distri_item(TA,nbA,nbIt,nbC,distri_hasard,cos_distri_hasard);
-  costaux_distri_hasard=cosinus_taux_distri_hasard(TA,nbA,nbIt,nbC);
+  distancetaux_distri_hasard=distance_taux_distri_hasard(TA,nbA,nbIt,nbC);
   //float taux_desac=taux_desaccord_avec_ref(TA,RefA,nbA,nbIt);
   //cout << "taux_moyen_de_desaccords_avec la ref=" << taux_desac << endl;
   //cout << "cosinus uniforme=" << cos_uniforme << endl;
@@ -414,17 +411,17 @@ void nbfois_unplusnbGgroupe(int nb,int nbG,int RefIni[],int nbIt,int nbC,int TE[
 			    float & moymtauxErRef,float & moysigmatauxErRef,float & moymtauxconf,
 			    float & moyalpha,float & moyalphaconf,
 			    float & moykappa,float & moycos_uniforme,
-			    float & moydistri_hasard,float & moycos_distri_hasard,
-			    float & cosmoytaux_distri_hasard) {
+			    float & moydistri_hasard,float & moydistance_distri_hasard,
+			    float & distancemoytaux_distri_hasard) {
   float mtauxErRef, sigmatauxErRef, mtauxconf, alpha, alphaconf, kappa, cos_uniforme, distri_hasard,
-          cos_distri_hasard,costaux_distri_hasard;
+          distance_distri_hasard,distancetaux_distri_hasard;
     moymtauxErRef=0;moysigmatauxErRef=0;moymtauxconf=0;moyalpha=0;moyalphaconf=0;
-    moykappa=0;moydistri_hasard=0;moycos_distri_hasard=0;
+    moykappa=0;moydistri_hasard=0;moydistance_distri_hasard=0;
     for (int i=0;i<nb;i++) {
       //cout << "\n unplusnbGgroupe, i=" << i << endl;
       unplusnbGgroupe(nbG,RefIni,nbIt,nbC,TE,TEIt,nbA,tauxErparAnnot,sigmatauxEr,choix1,choix2,
 		      mtauxErRef,sigmatauxErRef,mtauxconf,alpha,alphaconf,kappa,cos_uniforme,
-		      distri_hasard,cos_distri_hasard,costaux_distri_hasard);
+		      distri_hasard,distance_distri_hasard,distancetaux_distri_hasard);
         moymtauxErRef+=mtauxErRef;
         moysigmatauxErRef+=0;
         moymtauxconf+=mtauxconf;
@@ -433,8 +430,8 @@ void nbfois_unplusnbGgroupe(int nb,int nbG,int RefIni[],int nbIt,int nbC,int TE[
         moyalphaconf+=alphaconf;
         moycos_uniforme+=cos_uniforme;
         moydistri_hasard+=distri_hasard;
-        moycos_distri_hasard+=cos_distri_hasard;
-        cosmoytaux_distri_hasard+=costaux_distri_hasard;
+        moydistance_distri_hasard+=distance_distri_hasard;
+        distancemoytaux_distri_hasard+=distancetaux_distri_hasard;
     }
     moymtauxErRef=moymtauxErRef/nb;
     moymtauxconf=moymtauxconf/nb;
@@ -443,8 +440,8 @@ void nbfois_unplusnbGgroupe(int nb,int nbG,int RefIni[],int nbIt,int nbC,int TE[
     moyalphaconf=moyalphaconf/nb;
     moycos_uniforme=moycos_uniforme/nb;
     moydistri_hasard=moydistri_hasard/nb;
-    moycos_distri_hasard=moycos_distri_hasard/nb;
-    cosmoytaux_distri_hasard=cosmoytaux_distri_hasard/nb;
+    moydistance_distri_hasard=moydistance_distri_hasard/nb;
+    distancemoytaux_distri_hasard=distancemoytaux_distri_hasard/nb;
 }
 
 
@@ -455,10 +452,11 @@ void affichage_ligne_R(int nbval,string titre,float Tab[]){
     printf("%.4f, ",Tab[i]);
   printf("%.4f)\n",Tab[nbval-1]);
 }
+
 void affiche_res_series(int nbval,float tauxErparAnnot[],float moymtauxErRef[],float moysigmatauxErRef[],
                         float moymtauxconf[],float moyalpha[],float moyalphaconf[],float moykappa[],
 			float moycos_uniforme[],
-                        float moydistri_hasard[],float moycos_distri_hasard[],float cosmoytaux_distri_hasard[]){
+                        float moydistri_hasard[],float moydistance_distri_hasard[],float distancemoytaux_distri_hasard[]){
   affichage_ligne_R(nbval,"kappa              ",moykappa);
   affichage_ligne_R(nbval,"alpha              ",moyalpha);
   //affichage_ligne_R(nbval,"alphaconf          ",moyalphaconf);
@@ -467,18 +465,18 @@ void affiche_res_series(int nbval,float tauxErparAnnot[],float moymtauxErRef[],f
   //affichage_ligne_R(nbval,"cos_uniforme       ",moycos_uniforme);
   //affichage_ligne_R(nbval,"dist_itemrand      ",moydistri_hasard);
   //affichage_ligne_R(nbval,"cos_itemrand       ",moycos_distri_hasard);
-  affichage_ligne_R(nbval,"costauxitem_hasard ",cosmoytaux_distri_hasard);
+  affichage_ligne_R(nbval,"histointersectiontauxitem_hasard ",distancemoytaux_distri_hasard);
   /*printf("tauStauconf  <- c(");
   for (int i=0;i<(nbval-1);i++)
     printf("%.4f, ",moymtauxErRef[i]/moymtauxconf[i]);
     printf("%.4f)\n",moymtauxErRef[nbval-1]/moymtauxconf[nbval-1]);*/
 }
 
-void write_res_series(string corpus, int nbval, float moykappa[], float moyalpha[], float moymtauxErRef[], float cosmoytaux_distri_hasard[]) {
+void write_res_series(string corpus, int nbval, float moykappa[], float moyalpha[], float moymtauxErRef[], float distancemoytaux_distri_hasard[]) {
   string nomfich1 = "./res/kappa_" + corpus + ".csv";
   string nomfich2 = "./res/alpha_" + corpus + ".csv";
-  string nomfich3 = "./res/cosalpha_" + corpus + ".csv";
-  string nomfich4 = "./res/coskappa_" + corpus + ".csv";
+  string nomfich3 = "./res/alphahistointersection_" + corpus + ".csv";
+  string nomfich4 = "./res/kappahistointersection_" + corpus + ".csv";
   ofstream file1(nomfich1.c_str());
   ofstream file2(nomfich2.c_str());
   ofstream file3(nomfich3.c_str());
@@ -486,13 +484,13 @@ void write_res_series(string corpus, int nbval, float moykappa[], float moyalpha
   if (file1 && file2 && file3 && file4) {
     file1 << "kappa,taux" << endl;
     file2 << "alpha,taux" << endl;
-    file3 << "cosalpha,taux" << endl;
-    file4 << "coskappa,taux" << endl;
+    file3 << "alphahistointersection,taux" << endl;
+    file4 << "kappahistointersection,taux" << endl;
     for (int nb = 0; nb < nbval; nb++) {
       file1 << moykappa[nb] << "," << moymtauxErRef[nb]  << endl;
       file2 << moyalpha[nb] << "," << moymtauxErRef[nb] << endl;
-      file3 << (moyalpha[nb] * (1 - cosmoytaux_distri_hasard[nb])) << "," << moymtauxErRef[nb] << endl;
-      file4 << (moykappa[nb] * (1 - cosmoytaux_distri_hasard[nb])) << "," << moymtauxErRef[nb] << endl;
+      file3 << (moyalpha[nb] * distancemoytaux_distri_hasard[nb]) << "," << moymtauxErRef[nb] << endl;
+      file4 << (moykappa[nb] * distancemoytaux_distri_hasard[nb]) << "," << moymtauxErRef[nb] << endl;
     }
   }
   else
@@ -504,125 +502,123 @@ void serie_expes(string corpus, int nbval,int nb,int nbG,int RefIni[],int nbIt,i
 		 float moymtauxErRef[],float moysigmatauxErRef[],
 		 float moymtauxconf[],float moyalpha[],float moyalphaconf[],float moykappa[],
 		 float moycos_uniforme[],
-		 float moydistri_hasard[],float moycos_distri_hasard[],float cosmoytaux_distri_hasard[]) {
+		 float moydistri_hasard[],float moydistance_distri_hasard[],float distancemoytaux_distri_hasard[]) {
   for (int i=0;i<nbval;i++) {
     //for (int i=0;i<nbval;i++) {
     cout << "test=" << i << endl;
     nbfois_unplusnbGgroupe(nb,nbG,RefIni,nbIt,nbC,TE,TEIt,nbA,tauxErparAnnot[i],sigmatauxEr,choix1,choix2,
 		    moymtauxErRef[i],moysigmatauxErRef[i],
 		    moymtauxconf[i],moyalpha[i],moyalphaconf[i],moykappa[i],moycos_uniforme[i],
-                    moydistri_hasard[i],moycos_distri_hasard[i],cosmoytaux_distri_hasard[i]);
+                    moydistri_hasard[i],moydistance_distri_hasard[i],distancemoytaux_distri_hasard[i]);
   }
   affiche_res_series(nbval,tauxErparAnnot,moymtauxErRef,moysigmatauxErRef,moymtauxconf,moyalpha,
 		     moyalphaconf,moykappa,
-                     moycos_uniforme,moydistri_hasard,moycos_distri_hasard,cosmoytaux_distri_hasard);
-  write_res_series(corpus, nbval, moykappa, moyalpha, moymtauxErRef, cosmoytaux_distri_hasard);
+                     moycos_uniforme,moydistri_hasard,moydistance_distri_hasard,distancemoytaux_distri_hasard);
+  write_res_series(corpus, nbval, moykappa, moyalpha, moymtauxErRef, distancemoytaux_distri_hasard);
 }
 
 
 int main(int n,char * param[]) {
-    string arg = param[1];
-    int size;
-    string args[] = {"", "", "", "", ""};
-    if (arg == "all") {
-      size = 5;
-      args[0] = "coref";
-      args[1] = "similarite";
-      args[2] = "opinion";
-      args[3] = "emotion";
-      args[4] = "newsletter";
-    }
-    else {
-      size = 1;
-      args[0] = arg;
-    }
-    int c = 0;
-    while (c < size && args[c] != "") {
-      int nbC=5;//nb de classes d'annotation ; 5 par défaut ; modifier à 9 pour les entités nommées à 3 éventuellement pour opinion et émotion
-      srand(time(NULL));
-      int T[MAXIT][MAXA];//le tableau des annotations : une ligne par observable annoté
-      int nbAR=0,nbIt=0;//nb d'annotateurs réels et nb d'observables
-      int nbA=5;//nb d'annotateurs dans les groupes simulés
+  string arg = param[1];
+  int size;
+  string args[] = {"", "", "", "", ""};
+  if (arg == "all") {
+    size = 5;
+    args[0] = "coref";
+    args[1] = "similarite";
+    args[2] = "opinion";
+    args[3] = "emotion";
+    args[4] = "newsletter";
+  }
+  else {
+    size = 1;
+    args[0] = arg;
+  }
+  int c = 0;
+  while (c < size && args[c] != "") {
+    int nbC = 5; //nb de classes d'annotation ; 5 par défaut ; modifier à 9 pour les entités nommées à 3 éventuellement pour opinion et émotion
+    srand(time(NULL));
+    int T[MAXIT][MAXA]; //le tableau des annotations : une ligne par observable annoté
+    int nbAR = 0, nbIt = 0; //nb d'annotateurs réels et nb d'observables
+    int nbA = 5; //nb d'annotateurs dans les groupes simulés
 
-      //LECTURE 5 classes
-      lecture_corpus(args[c],nbC,nbAR,nbIt,T);//lecture d'un corpus cf. outils_distri_reelles.cpp
-      affiche_annot(T,nbIt,nbAR);
-      //CALCULS SUR DISTRI Réelles
-      int Ref[MAXIT];
-      int TE[MAXIT];//le nombre d'erreurs par item
-      float TEIt[MAXIT][MAXCL];// le tableau du %tage d'erreurs par classe
-      int TConfusion[MAXCL][MAXCL];
-      etude_distri_reelle(T,nbAR,nbIt,nbC,Ref,TE,TEIt);
-      //affichage TEIt
-      for (int it=0;it<nbIt;it++) {
-        for (int c=0;c<nbC;c++)
-  	cout << TEIt[it][c] << "  ";
-        cout << endl;
-      }
-      table_confusion_classes(T,nbAR,nbIt,nbC,TConfusion);
-      float Tdist[MAXCL][MAXCL];
-      confusionnormalisee(TConfusion,nbC,Tdist);
-      //distancegrossiere(nbC,Tdist);
-      //affichage distances annotations réelles
-      float SLignes[nbC],SCol[nbC],Sdiag;
-      SLSC(Tdist,nbC,SLignes,SCol,Sdiag);
-      /* //affichage confusion
-      cout << "tableau confusion entre classes\n";
-      for (int c1=0;c1<nbC;c1++) {
-          for (int c2=0;c2<nbC;c2++)
-              printf("%.6f ",Tdist[c1][c2]);
-          printf(" | %.6f\n",SLignes[c1]);
-      }
-      for (int c2=0;c2<nbC;c2++) printf(" ----- ") ; cout << endl;
+    //LECTURE 5 classes
+    lecture_corpus(args[c], nbC, nbAR, nbIt, T); //lecture d'un corpus cf. outils_distri_reelles.cpp
+    affiche_annot(T, nbIt, nbAR);
+    //CALCULS SUR DISTRI Réelles
+    int Ref[MAXIT];
+    int TE[MAXIT]; //le nombre d'erreurs par item
+    float TEIt[MAXIT][MAXCL]; // le tableau du %tage d'erreurs par classe
+    int TConfusion[MAXCL][MAXCL];
+    etude_distri_reelle(T, nbAR, nbIt, nbC, Ref, TE, TEIt);
+    //affichage TEIt
+    for (int it = 0; it < nbIt; it++) {
+      for (int c = 0; c < nbC; c++)
+  	   cout << TEIt[it][c] << "  ";
+      cout << endl;
+    }
+    table_confusion_classes(T, nbAR, nbIt, nbC, TConfusion);
+    float Tdist[MAXCL][MAXCL];
+    confusionnormalisee(TConfusion, nbC, Tdist);
+    //distancegrossiere(nbC,Tdist);
+    //affichage distances annotations réelles
+    float SLignes[nbC], SCol[nbC], Sdiag;
+    SLSC(Tdist, nbC, SLignes, SCol, Sdiag);
+    /* //affichage confusion
+    cout << "tableau confusion entre classes\n";
+    for (int c1=0;c1<nbC;c1++) {
+      for (int c2=0;c2<nbC;c2++)
+        printf("%.6f ",Tdist[c1][c2]);
+      printf(" | %.6f\n",SLignes[c1]);
+    }
+    for (int c2=0;c2<nbC;c2++) printf(" ----- ") ; cout << endl;
       for (int c2=0;c2<nbC;c2++) printf("%.6f ",SLignes[c2]);
       printf(" | %.6f\n",Sdiag);
       */
-      float sim_uniforme,moy, sigma;
-      int nbdesa=0;
-      mesuresrepartitiondesaccords(TConfusion,T,nbC,nbIt,nbAR,sim_uniforme,moy,sigma);
-      float Tdist2[MAXCL][MAXCL];
-      Tdist2Tdist2(Tdist,nbC,Tdist2);
+    float sim_uniforme, moy, sigma;
+    int nbdesa = 0;
+    mesuresrepartitiondesaccords(TConfusion, T, nbC, nbIt, nbAR, sim_uniforme, moy, sigma);
+    float Tdist2[MAXCL][MAXCL];
+    Tdist2Tdist2(Tdist,nbC, Tdist2);
 
-       //affichage Tdist2 annotations réelles
-      cout << "Tdist2\n";
-      for (int c1=0;c1<nbC-1;c1++) {
-        for (int c2=0;c2<nbC;c2++)
-          if (c2<=c1) printf("%s  ","_______");
-         else printf("%f ",Tdist2[c1][c2]);
-        cout << endl;
-      }
-
-      //ANNOTATIONS FICTIVES
-      //float tauxErparAnnot=0.25,sigmatauxEr=0.05;
-
-      vector<int> nbErparA;
-      nbErparA.resize(nbA);
-      int Tabannot[nbA][MAXIT];
-
-      int nbG = 100; //nb de groupes auquel on compare un groupe, 100 par défaut
-      int nb = 50; //à revoir
-
-       // SERIES d'expé
-      int choix1=1, choix2=1;
-
-      //I - Variations mesure d'accords/taux d'écart entre Rf
-      float  sigmatauxEr=0.05;
-
-      // pour tester
-      //float TabtauxErparAnnot[2]={0.2};
-      //int nbtests=1;
-      // fin pour tester
-
-      //float TabtauxErparAnnot[12]={0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.6,0.7};
-      int nbtests=10;
-      float TabtauxErparAnnot[]={0.075,0.1,0.125,0.15,0.175,0.2,0.25,0.3,0.35,0.4};
-      float moymtauxErRef[nbtests],moysigmatauxErRef[nbtests],moymtauxconf[nbtests],moyalpha[nbtests],
-        moyalphaconf[nbtests],moykappa[nbtests],moycos_uniforme[nbtests],moydistri_hasard[nbtests],
-            moycos_distri_hasard[nbtests],cosmoytaux_distri_hasard[nbtests];
-      serie_expes(args[c], nbtests,nb,nbG,Ref,nbIt,nbC,TE,TEIt,nbA,TabtauxErparAnnot,sigmatauxEr,choix1,choix2,
-                  moymtauxErRef,moysigmatauxErRef,moymtauxconf,moyalpha,moyalphaconf,moykappa,
-  		moycos_uniforme,moydistri_hasard,moycos_distri_hasard,cosmoytaux_distri_hasard);
-      c++;
+    //affichage Tdist2 annotations réelles
+    cout << "Tdist2\n";
+    for (int c1 = 0; c1 < nbC - 1; c1++) {
+      for (int c2 = 0; c2 < nbC; c2++)
+        if (c2<=c1)
+          printf("%s  ", "_______");
+        else
+          printf("%f ", Tdist2[c1][c2]);
+      cout << endl;
     }
-    return 0;
+
+    //ANNOTATIONS FICTIVES
+    //float tauxErparAnnot=0.25,sigmatauxEr=0.05;
+
+    vector<int> nbErparA;
+    nbErparA.resize(nbA);
+    int Tabannot[nbA][MAXIT];
+
+    int nbG = 100; //nb de groupes auquel on compare un groupe, 100 par défaut
+    int nb = 50; //à revoir
+
+    // SERIES d'expé
+    int choix1 = 1, choix2 = 1;
+
+    //I - Variations mesure d'accords/taux d'écart entre Rf
+    float  sigmatauxEr = 0.05;
+
+    // pour tester
+    //float TabtauxErparAnnot[2]={0.2};
+    //int nbtests=1;
+    // fin pour tester
+
+    //float TabtauxErparAnnot[12]={0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.6,0.7};
+    int nbtests = 10;
+    float TabtauxErparAnnot[] = {0.075, 0.1, 0.125, 0.15, 0.175, 0.2, 0.25, 0.3, 0.35, 0.4};
+    float moymtauxErRef[nbtests], moysigmatauxErRef[nbtests], moymtauxconf[nbtests], moyalpha[nbtests], moyalphaconf[nbtests], moykappa[nbtests], moycos_uniforme[nbtests], moydistri_hasard[nbtests], moydistance_distri_hasard[nbtests], distancemoytaux_distri_hasard[nbtests];
+    serie_expes(args[c], nbtests,nb, nbG, Ref, nbIt, nbC, TE, TEIt, nbA, TabtauxErparAnnot, sigmatauxEr, choix1, choix2,moymtauxErRef, moysigmatauxErRef, moymtauxconf, moyalpha, moyalphaconf, moykappa, moycos_uniforme, moydistri_hasard, moydistance_distri_hasard, distancemoytaux_distri_hasard);
+    c++;
+  }
+  return 0;
 }

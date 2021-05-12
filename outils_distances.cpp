@@ -365,7 +365,7 @@ float histointersection_vect_entier(int v1[], int v2[], int nbIt) {
   int num, denom;
   for (int it = 0; it < nbIt; it++) {
     num += min(v1[it], v2[it]);
-    denom + v2[it];
+    denom += v2[it];
   }
   return 1.0 - (1.0 * (num / denom));
 }
@@ -373,8 +373,8 @@ float histointersection_vect_entier(int v1[], int v2[], int nbIt) {
 // histogram correlation
 float histocorrelation_vect_entier(int v1[], int v2[], int nbIt) {
   float num, denom, denom1, denom2, moyv1, moyv2;
-  moyv1 = moy_vect_entier(v1);
-  moyv2 = moy_vect_entier(v2);
+  moyv1 = moy_vect_entier(v1, nbIt);
+  moyv2 = moy_vect_entier(v2, nbIt);
   for (int it = 0; it < nbIt; it++) {
     num += (v1[it] - moyv1) * (v2[it] - moyv2);
     denom1 += (v1[it] - moyv1) * (v1[it] - moyv1);
@@ -427,7 +427,7 @@ void distance_distri_item(int TA[MAXIT][MAXA],int nbA,int nbIt,int nbC,
 // dans le cas de 5 annotateurs et 5 classes, on a 7 possibilités (Tval)
 //     1 - vecteur qui correspond au cas d'une annotation au hasard (Tcomb)
 //     2 - vecteur observé dans l'annotation réelle
-float cosinus_taux_distri_hasard(int T[MAXIT][MAXA], int nbA, int nbIt, int nbC) {
+float distance_taux_distri_hasard(int T[MAXIT][MAXA], int nbA, int nbIt, int nbC) {
   if ((nbC == 5) && (nbA == 5)) {
     int Tcomb[7] = {1, 20, 40, 120, 180, 240, 24};
     int Treel[7] = {0, 0, 0, 0, 0, 0, 0};
@@ -441,14 +441,14 @@ float cosinus_taux_distri_hasard(int T[MAXIT][MAXA], int nbA, int nbIt, int nbC)
       int ind = 0;
       while ((ind < 7) && (nbdes > Tval[ind])) ind++;
         if (ind >= 7)
-          cout << "bug cosinus_taux_distri_hasard\n";
+          cout << "bug distance_taux_distri_hasard\n";
         else
           (Treel[ind])++;
     }
-       return cosinus_vect_entier(Tcomb, Treel, 7);
+    return histointersection_vect_entier(Tcomb, Treel, 7);
   }
   else {
-    cout << "pas de calcul prévu pour cosinus_taux_distri_hasard\n ";
-        return 0;
+    cout << "pas de calcul prévu pour distance_taux_distri_hasard\n ";
+    return 0;
   }
 }
