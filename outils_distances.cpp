@@ -329,16 +329,59 @@ void vect_desaccords_annotation_aleatoire(int nbA,int nbIt,int nbC,int Vrand[]) 
     else cout << "desaccords aleatoires : calcul ou simulation à faire\n";
 }
 
+//-----DISTANCES ENTRE DISTRIBUTIONS-----
 
-float cosinus_vect_entier(int v1[],int v2[],int nbIt){
-    float num=0,v1car=0,v2car=0;
-    for (int it=0;it<nbIt;it++){
-        v1car+=1.0*v1[it]*v1[it];
-        v2car+=1.0*v2[it]*v2[it];
-        num+=1.0*v1[it]*v2[it];
-    }
-    float res=(num/(sqrt(v1car)*sqrt(v2car)));
-    return res;
+// min(x, y)
+int min(int x, int y) {
+  if (x <= y)
+    return x;
+  else
+    return y;
+}
+
+// moyenne d'un vecteur d'entiers
+float moy_vect_entier(int v[], int nbIt) {
+  float sum;
+  for (int it = 0; it < nbIt; it++) {
+    sum += v[it];
+  }
+  return 1.0 * (sum / nbIt);
+}
+
+// distance cosinus
+float cosinus_vect_entier(int v1[], int v2[], int nbIt) {
+  float num = 0, v1car = 0, v2car = 0;
+  for (int it = 0; it < nbIt; it++) {
+    v1car += 1.0 * v1[it] * v1[it];
+    v2car += 1.0 * v2[it] * v2[it];
+    num += 1.0 * v1[it] * v2[it];
+  }
+  float res = (num / (sqrt(v1car) * sqrt(v2car)));
+  return res;
+}
+
+// histogram intersection
+float histointersection_vect_entier(int v1[], int v2[], int nbIt) {
+  int num, denom;
+  for (int it = 0; it < nbIt; it++) {
+    num += min(v1[it], v2[it]);
+    denom + v2[it];
+  }
+  return 1.0 - (1.0 * (num / denom));
+}
+
+// histogram correlation
+float histocorrelation_vect_entier(int v1[], int v2[], int nbIt) {
+  float num, denom, denom1, denom2, moyv1, moyv2;
+  moyv1 = moy_vect_entier(v1);
+  moyv2 = moy_vect_entier(v2);
+  for (int it = 0; it < nbIt; it++) {
+    num += (v1[it] - moyv1) * (v2[it] - moyv2);
+    denom1 += (v1[it] - moyv1) * (v1[it] - moyv1);
+    denom2 += (v2[it] - moyv2) * (v2[it] - moyv2);
+  }
+  denom = sqrt(denom1 * denom2);
+  return 1.0 * (num / denom);
 }
 
 float distance_vect_entier(int v1[],int v2[],int nbIt){
@@ -349,6 +392,7 @@ float distance_vect_entier(int v1[],int v2[],int nbIt){
     res=(1.0*res)/nbIt;
     return res;
 }
+
 //on compare le nombre d'items ayant entre 0 et 4 modifs (moins de 25%)
 float distance2_vect_entier(int v1[],int v2[],int nbIt){
     int S1=0,S2=0;
@@ -362,7 +406,6 @@ float distance2_vect_entier(int v1[],int v2[],int nbIt){
     }
     return (1.0*abs(S1-S2)/nbIt);
 }
-//
 
 void distance_distri_item(int TA[MAXIT][MAXA],int nbA,int nbIt,int nbC,
                            float & distance_annot_hasard,float & cosinus_annot_hasard){
@@ -402,7 +445,7 @@ float cosinus_taux_distri_hasard(int T[MAXIT][MAXA], int nbA, int nbIt, int nbC)
         else
           (Treel[ind])++;
     }
-       return cosinus_vect_entier(Tcomb,Treel,7);
+       return cosinus_vect_entier(Tcomb, Treel, 7);
   }
   else {
     cout << "pas de calcul prévu pour cosinus_taux_distri_hasard\n ";

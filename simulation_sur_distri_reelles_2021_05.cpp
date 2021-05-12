@@ -416,7 +416,7 @@ void nbfois_unplusnbGgroupe(int nb,int nbG,int RefIni[],int nbIt,int nbC,int TE[
 			    float & moykappa,float & moycos_uniforme,
 			    float & moydistri_hasard,float & moycos_distri_hasard,
 			    float & cosmoytaux_distri_hasard) {
-  float mtauxErRef,sigmatauxErRef,mtauxconf,alpha,alphaconf,kappa,cos_uniforme,distri_hasard,
+  float mtauxErRef, sigmatauxErRef, mtauxconf, alpha, alphaconf, kappa, cos_uniforme, distri_hasard,
           cos_distri_hasard,costaux_distri_hasard;
     moymtauxErRef=0;moysigmatauxErRef=0;moymtauxconf=0;moyalpha=0;moyalphaconf=0;
     moykappa=0;moydistri_hasard=0;moycos_distri_hasard=0;
@@ -484,7 +484,7 @@ void write_res_series(string corpus, int nbval, float moykappa[], float moyalpha
   ofstream file3(nomfich3.c_str());
   ofstream file4(nomfich4.c_str());
   if (file1 && file2 && file3 && file4) {
-    file1 << "kappa,taux,cos" << endl;
+    file1 << "kappa,taux" << endl;
     file2 << "alpha,taux" << endl;
     file3 << "cosalpha,taux" << endl;
     file4 << "coskappa,taux" << endl;
