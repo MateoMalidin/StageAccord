@@ -339,6 +339,44 @@ int min(int x, int y) {
     return y;
 }
 
+// retourne le minimum d'un vecteur
+float min_vect_reel(float v[], int nbIt) {
+  float min = v[0];
+  for (int it = 1; it < nbIt; it++) {
+    if (v[it] < min)
+      min = v[it];
+  }
+  return min;
+}
+
+// retourne le maximum d'un vecteur
+float max_vect_reel(float v[], int nbIt) {
+  float max = v[0];
+  for (int it = 1; it < nbIt; it++) {
+    if (v[it] > max)
+      max = v[it];
+  }
+  return max;
+}
+
+float moy_vect_reel(float v[], int nbIt) {
+  float sum;
+  for (int it = 0; it < nbIt; it++) {
+    sum += v[it];
+  }
+  return sum / nbIt;
+}
+
+// écart-type d'un vecteur
+float ecart_type_vect_reel(float v[], int nbIt) {
+  float sum;
+  float moy = moy_vect_reel(v, nbIt);
+  for (int it = 0; it < nbIt; it++) {
+    sum += (v[it] - moy) * (v[it] - moy);
+  }
+  return sqrt((1.0 / nbIt) * sum);
+}
+
 // moyenne d'un vecteur d'entiers
 float moy_vect_entier(int v[], int nbIt) {
   float sum;
@@ -346,6 +384,16 @@ float moy_vect_entier(int v[], int nbIt) {
     sum += v[it];
   }
   return 1.0 * (sum / nbIt);
+}
+
+// normalise un vecteur
+void normalise(float v[], int nbIt) {
+  float moy = moy_vect_reel(v, nbIt);
+  float ecart = ecart_type_vect_reel(v, nbIt);
+  for (int it = 0; it < nbIt; it++) {
+    //v[it] = (v[it] - moy) / ecart;
+    v[it] = (v[it] - min_vect_reel(v, nbIt)) / max_vect_reel(v, nbIt);
+  }
 }
 
 // distance cosinus
@@ -372,7 +420,7 @@ float histointersection_vect_entier(int v1[], int v2[], int nbIt) {
 
 // histogram correlation
 float histocorrelation_vect_entier(int v1[], int v2[], int nbIt) {
-  float num, denom, denom1, denom2, moyv1, moyv2;
+  float num, denom, denom1, denom2, moyv1, moyv2, res;
   moyv1 = moy_vect_entier(v1, nbIt);
   moyv2 = moy_vect_entier(v2, nbIt);
   for (int it = 0; it < nbIt; it++) {
@@ -381,10 +429,73 @@ float histocorrelation_vect_entier(int v1[], int v2[], int nbIt) {
     denom2 += (v2[it] - moyv2) * (v2[it] - moyv2);
   }
   denom = sqrt(denom1 * denom2);
-  return 1.0 * (num / denom);
+  res = 1.0 * (num / denom);
+  return res;
 }
 
-float distance_vect_entier(int v1[],int v2[],int nbIt){
+// kappa2 distance
+float chi2_vect_entier(int v1[], int v2[], int nbIt) {
+  float sum;
+  for (int it = 0; it < nbIt; it++) {
+    if (v2[it] != 0)
+      sum += ((v1[it] - v2[it]) * (v1[it] - v2[it])) / v2[it];
+  }
+  return 1.0 * sum;
+}
+
+// Kullback-Leibler Divergence
+float KL_vect_entier(int v1[], int v2[], int nbIt) {
+  float sum;
+  for (int it = 0; it < nbIt; it++) {
+    if (v2[it] != 0)
+      sum += v1[it] * log2(v1[it] / v2[it]);
+  }
+  return 1.0 * sum;
+}
+
+// Jeffreys distance
+float Jeffrey_vect_entier(int v1[], int v2[], int nbIt) {
+  float sum;
+  for (int it = 0; it < nbIt; it++) {
+    sum += (sqrt(v1[it]) - sqrt(v2[it])) * (sqrt(v1[it]) - sqrt(v2[it]));
+  }
+  return 1.0 * sum;
+}
+
+// symetric divergence
+float sym_vect_entier(int v1[],int v2[],int nbIt) {
+  return KL_vect_entier(v1, v2, nbIt) + KL_vect_entier(v2, v1, nbIt);
+}
+
+// J-Divergence
+float Jdiv_vect_entier(int v1[],int v2[],int nbIt) {
+  float sum;
+  for (int it = 0; it < nbIt; it++) {
+    if (v2[it] != 0)
+      sum += (v1[it] - v2[it]) * log2(v1[it]/v2[it]);
+  }
+  return 1.0 * sum;
+}
+
+// Hellinger distance
+float H_vect_entier(int v1[],int v2[],int nbIt) {
+  float sum;
+  for (int it = 0; it < nbIt; it ++) {
+    sum += (sqrt(v1[it]) - sqrt(v2[it])) * (sqrt(v1[it]) - sqrt(v2[it]));
+  }
+  return (1.0 / (sqrt(2.0))) * sqrt(sum);
+}
+
+// Bhattacharyya distance
+float B_vect_entier(int v1[],int v2[],int nbIt) {
+  float sum;
+  for (int it = 0; it < nbIt; it++) {
+    sum += sqrt(v1[it] * v2[it]);
+  }
+  return - log(sum);
+}
+
+float distance_vect_entier(int v1[],int v2[],int nbIt) {
     float res=0;
     for (int it=0;it<nbIt;it++) {
         res+=abs(v1[it]-v2[it]);
@@ -407,7 +518,7 @@ float distance2_vect_entier(int v1[],int v2[],int nbIt){
     return (1.0*abs(S1-S2)/nbIt);
 }
 
-void distance_distri_item(int TA[MAXIT][MAXA],int nbA,int nbIt,int nbC,
+void KL_distri_item(int TA[MAXIT][MAXA],int nbA,int nbIt,int nbC,
                            float & distance_annot_hasard,float & cosinus_annot_hasard){
 
     int VdesReel[nbIt],Vrand[nbIt];
@@ -445,7 +556,7 @@ float distance_taux_distri_hasard(int T[MAXIT][MAXA], int nbA, int nbIt, int nbC
         else
           (Treel[ind])++;
     }
-    return histointersection_vect_entier(Tcomb, Treel, 7);
+    return Jeffrey_vect_entier(Tcomb, Treel, 7);
   }
   else {
     cout << "pas de calcul prévu pour distance_taux_distri_hasard\n ";
