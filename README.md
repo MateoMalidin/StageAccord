@@ -1,7 +1,7 @@
 # AccordInterAnnotateur
 
 Pour télécharger le projet : 
-  - git clone https://github.com/MateoMalidin/AccordInterAnnotateur.git
+  - git clone https://github.com/MateoMalidin/StageAccord.git
 
 pour mettre à jour un dépot local :
   - git pull origin master
