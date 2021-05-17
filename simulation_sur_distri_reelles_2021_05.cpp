@@ -379,9 +379,9 @@ void unplusnbGgroupe(int nbG,int RefIni[],int nbIt,int nbC,int TE[],float TEIt[]
   float Tdist[MAXCL][MAXCL],Tdist2[MAXCL][MAXCL];
   annotations1groupe(RefIni,nbIt,nbC,TE,TEIt,nbA,moyA,sigmaA,TA,RefA,choix1,choix2);
   ajout_un(TA,nbIt,nbA,TA1);//classes numérotées de 1 à N
-  alphaR=alpha(TA1,nbIt,nbA,nbC);
-  transpose(TA,TTA,nbIt,nbA);
-  kappa=kappaAP(nbIt,nbC,nbA,TTA);
+  alphaR = alpha(TA1,nbIt,nbA,nbC);
+  transpose(TA, TTA, nbIt, nbA);
+  kappa = kappaAP(nbIt,nbC,nbA,TTA);
   //cout << "alpha=" << alphaR << endl;
   //alphaconf=calcul_alphaconf(TA,nbIt,nbA,nbC,Tdist,Tdist2);
   alphaconf=0;
@@ -434,8 +434,9 @@ void nbfois_unplusnbGgroupe(int nb,int nbG,int RefIni[],int nbIt,int nbC,int TE[
     }
     moymtauxErRef=moymtauxErRef/nb;
     moymtauxconf=moymtauxconf/nb;
-    moyalpha=moyalpha/nb;
-    moykappa=moykappa/nb;
+    cout << moymtauxconf << endl;
+    moyalpha = (moyalpha / nb);
+    moykappa = (moykappa / nb);
     moyalphaconf=moyalphaconf/nb;
     moycos_uniforme=moycos_uniforme/nb;
     moydistri_hasard=moydistri_hasard/nb;
@@ -488,8 +489,8 @@ void write_res_series(string corpus, int nbval, float moykappa[], float moyalpha
     for (int nb = 0; nb < nbval; nb++) {
       file1 << moykappa[nb] << "," << moymtauxErRef[nb]  << endl;
       file2 << moyalpha[nb] << "," << moymtauxErRef[nb] << endl;
-      file3 << (moyalpha[nb] * (1 - (distancemoytaux_distri_hasard[nb] / 2))) << "," << moymtauxErRef[nb] << endl;
-      file4 << (moykappa[nb] * (1 - (distancemoytaux_distri_hasard[nb] / 2))) << "," << moymtauxErRef[nb] << endl;
+      file3 << (moyalpha[nb] * (cos(distancemoytaux_distri_hasard[nb]))) << "," << (moymtauxErRef[nb] * exp(distancemoytaux_distri_hasard[nb])) << endl;
+      file4 << (moykappa[nb] * (cos(distancemoytaux_distri_hasard[nb]))) << "," << (moymtauxErRef[nb] * exp(distancemoytaux_distri_hasard[nb])) << endl;
     }
   }
   else
@@ -585,9 +586,9 @@ int main(int n,char * param[]) {
     cout << "Tdist2\n";
     for (int c1 = 0; c1 < nbC - 1; c1++) {
       for (int c2 = 0; c2 < nbC; c2++)
-        if (c2<=c1)
-          printf("%s  ", "_______");
-        else
+        //if (c2<=c1)
+          //printf("%s  ", "_______");
+        //else
           printf("%f ", Tdist2[c1][c2]);
       cout << endl;
     }
@@ -600,7 +601,7 @@ int main(int n,char * param[]) {
     int Tabannot[nbA][MAXIT];
 
     int nbG = 100; //nb de groupes auquel on compare un groupe, 100 par défaut
-    int nb = 50; //à revoir
+    int nb = 100; //à revoir
 
     // SERIES d'expé
     int choix1 = 1, choix2 = 1;

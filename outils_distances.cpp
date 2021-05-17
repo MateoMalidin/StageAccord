@@ -193,14 +193,16 @@ void mesuresrepartitiondesaccords(int TConf[MAXCL][MAXCL],int T[MAXIT][MAXA],
 }
 
 //taux d'écarts entre deux ref, pondéré par la distance entre classes
-float tauxdiff2Refdist(int Ref1[],int Ref2[],int nbIt,float Tdist[MAXCL][MAXCL]){
-    float sommediff=0;
+float tauxdiff2Refdist(int Ref1[],int Ref2[],int nbIt,float Tdist[MAXCL][MAXCL]) {
+    float sommediff = 0;
     int c1,c2;
     for (int i=0;i<nbIt;i++) {
-        c1=Ref1[i];c2=Ref2[i];
-        if (c1!=c2) sommediff+=Tdist[c1][c2];
+        c1 = Ref1[i];
+        c2 = Ref2[i];
+        if (c1 != c2)
+          sommediff += Tdist[c1][c2];
     }
-    return sommediff/nbIt;
+    return sommediff / nbIt;
 }
 
 /***********************************************************/
@@ -386,12 +388,19 @@ float moy_vect_entier(int v[], int nbIt) {
   return 1.0 * (sum / nbIt);
 }
 
+// moyenne d'un vecteur d'entiers
+float ecart_type_vect_entier(int v[], int nbIt) {
+  float sum;
+  float moy = moy_vect_entier(v, nbIt);
+  for (int it = 0; it < nbIt; it++) {
+    sum += (v[it] - moy) * (v[it] - moy);
+  }
+  return sqrt((1.0 / nbIt) * sum);
+}
+
 // normalise un vecteur
 void normalise(float v[], int nbIt) {
-  float moy = moy_vect_reel(v, nbIt);
-  float ecart = ecart_type_vect_reel(v, nbIt);
   for (int it = 0; it < nbIt; it++) {
-    //v[it] = (v[it] - moy) / ecart;
     v[it] = (v[it] - min_vect_reel(v, nbIt)) / max_vect_reel(v, nbIt);
   }
 }
@@ -433,7 +442,7 @@ float histocorrelation_vect_entier(int v1[], int v2[], int nbIt) {
   return res;
 }
 
-// kappa2 distance
+// chi2 distance
 float chi2_vect_entier(int v1[], int v2[], int nbIt) {
   float sum;
   for (int it = 0; it < nbIt; it++) {
@@ -493,6 +502,16 @@ float B_vect_entier(int v1[],int v2[],int nbIt) {
     sum += sqrt(v1[it] * v2[it]);
   }
   return - log(sum);
+}
+
+// distance euclidienne normalisée
+float eucnormalise_vect_entier(int v1[], int v2[], int nbIt) {
+  float ecart = ecart_type_vect_entier(v1, nbIt);
+  float sum;
+  for (int it = 0; it < nbIt; it++) {
+    sum += ((v1[it] - v2[it]) * (v1[it] - v2[it])) / ecart;
+  }
+  return sqrt(sum);
 }
 
 float distance_vect_entier(int v1[],int v2[],int nbIt) {
