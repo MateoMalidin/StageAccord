@@ -501,17 +501,25 @@ float B_vect_entier(int v1[],int v2[],int nbIt) {
   for (int it = 0; it < nbIt; it++) {
     sum += sqrt(v1[it] * v2[it]);
   }
-  return - log(sum);
+  return (- log(sum));
 }
 
-// distance euclidienne normalisée
-float eucnormalise_vect_entier(int v1[], int v2[], int nbIt) {
-  float ecart = ecart_type_vect_entier(v1, nbIt);
+// distance euclidienne
+float euc_vect_entier(int v1[], int v2[], int nbIt) {
   float sum;
   for (int it = 0; it < nbIt; it++) {
-    sum += ((v1[it] - v2[it]) * (v1[it] - v2[it])) / ecart;
+    sum += pow((v1[it] - v2[it]), 2);
   }
-  return sqrt(sum);
+  return 1.0 * sqrt(sum);
+}
+
+// distance de Manhattan
+float man_vect_entier(int v1[], int v2[], int nbIt) {
+  float sum;
+  for (int it = 0; it < nbIt; it++) {
+    sum += abs(v1[it] - v2[it]);
+  }
+  return 1.0 * sum;
 }
 
 float distance_vect_entier(int v1[],int v2[],int nbIt) {
@@ -575,7 +583,7 @@ float distance_taux_distri_hasard(int T[MAXIT][MAXA], int nbA, int nbIt, int nbC
         else
           (Treel[ind])++;
     }
-    return Jeffrey_vect_entier(Tcomb, Treel, 7);
+    return man_vect_entier(Tcomb, Treel, 7);
   }
   else {
     cout << "pas de calcul prévu pour distance_taux_distri_hasard\n ";
