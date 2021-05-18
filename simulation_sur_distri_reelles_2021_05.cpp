@@ -492,8 +492,8 @@ void affiche_res_series(int nbval,float tauxErparAnnot[],float moymtauxErRef[],f
 void write_res_series(string corpus, int nbval, float moykappa[], float moyalpha[], float moymtauxErRef[], float distancemoytaux_distri_hasard[]) {
   string nomfich1 = "./res/kappa_" + corpus + ".csv";
   string nomfich2 = "./res/alpha_" + corpus + ".csv";
-  string nomfich3 = "./res/alphaJ_" + corpus + ".csv";
-  string nomfich4 = "./res/kappaJ_" + corpus + ".csv";
+  string nomfich3 = "./res/alphaD_" + corpus + ".csv";
+  string nomfich4 = "./res/kappaD_" + corpus + ".csv";
   ofstream file1(nomfich1.c_str());
   ofstream file2(nomfich2.c_str());
   ofstream file3(nomfich3.c_str());
@@ -501,13 +501,13 @@ void write_res_series(string corpus, int nbval, float moykappa[], float moyalpha
   if (file1 && file2 && file3 && file4) {
     file1 << "kappa,taux" << endl;
     file2 << "alpha,taux" << endl;
-    file3 << "alphaJ,taux" << endl;
-    file4 << "kappaJ,taux" << endl;
+    file3 << "alphaD,taux" << endl;
+    file4 << "kappaD,taux" << endl;
     for (int nb = 0; nb < nbval; nb++) {
       file1 << moykappa[nb] << "," << moymtauxErRef[nb]  << endl;
       file2 << moyalpha[nb] << "," << moymtauxErRef[nb] << endl;
-      file3 << (moyalpha[nb] * (cos(distancemoytaux_distri_hasard[nb]))) << "," << (moymtauxErRef[nb]) << endl;
-      file4 << (moykappa[nb] * (cos(distancemoytaux_distri_hasard[nb]))) << "," << (moymtauxErRef[nb]) << endl;
+      file3 << (moyalpha[nb] * (1 - (distancemoytaux_distri_hasard[nb] / 2))) << "," << ((moymtauxErRef[nb])) << endl;
+      file4 << (moykappa[nb] * (1 - (distancemoytaux_distri_hasard[nb] / 2))) << "," << ((moymtauxErRef[nb])) << endl;
     }
   }
   else
