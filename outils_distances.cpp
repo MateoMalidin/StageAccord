@@ -510,9 +510,9 @@ float Jdiv_vect_entier(int v1[],int v2[],int nbIt) {
 float H_vect_entier(int v1[],int v2[],int nbIt) {
   float sum;
   for (int it = 0; it < nbIt; it ++) {
-    sum += (sqrt(v1[it]) - sqrt(v2[it])) * (sqrt(v1[it]) - sqrt(v2[it]));
+    sum += sqrt(v1[it] * v2[it]);
   }
-  return (1.0 / (sqrt(2.0))) * sqrt(sum);
+  return 1.0 * sum;
 }
 
 // Bhattacharyya distance
@@ -521,7 +521,7 @@ float B_vect_entier(int v1[],int v2[],int nbIt) {
   for (int it = 0; it < nbIt; it++) {
     sum += sqrt(v1[it] * v2[it]);
   }
-  return (- log(sum));
+  return (0 - log(sum));
 }
 
 // distance euclidienne
@@ -603,7 +603,7 @@ float distance_taux_distri_hasard(int T[MAXIT][MAXA], int nbA, int nbIt, int nbC
         else
           (Treel[ind])++;
     }
-    return distance_vect_entier(Tcomb, Treel, 7);
+    return H_vect_entier(Tcomb, Treel, 7);
   }
   else {
     cout << "pas de calcul prévu pour distance_taux_distri_hasard\n ";
