@@ -21,6 +21,7 @@ void choixannotations(int nbErparA[], int nbA, int nbIt, int nbC, int Ref[], int
 void annotations1groupe(int RefIni[], int nbIt, int nbC, int TE[], float TEIt[][MAXCL], int nbA, float moyA, float sigmaA, int Tabannot[][MAXA], int Ref[], int choix1, int choix2);
 void table_confusion_classes(int T[][MAXA], int nbA, int nbIt, int nbC, int TConf[MAXCL][MAXCL]);
 void transpose(int T[MAXIT][MAXA],int TT[MAXA][MAXIT],int nbIt,int nbA);
+void corrige(string corpus, int nbval, float moymtauxErRef[]);
 void unplusnbGgroupe(int nbG,int RefIni[],int nbIt,int nbC,int TE[],float TEIt[][MAXCL],int nbA,float tauxErparAnnot,float sigmatauxEr,int choix1,int choix2,float & mtauxErRef,float & sigmatauxErRef,float & mtauxconf,float & alphaR,float & alphaconf,float & kappa,float & cos_uniforme,float & distri_hasard,float & distance_distri_hasard,float & distancetaux_distri_hasard);
 void nbfois_unplusnbGgroupe(int nb,int nbG,int RefIni[],int nbIt,int nbC,int TE[],float TEIt[][MAXCL],int nbA,float tauxErparAnnot,float sigmatauxEr,int choix1,int choix2,float & moymtauxErRef,float & moysigmatauxErRef,float & moymtauxconf,float & moyalpha,float & moyalphaconf,float & moykappa,float & moycos_uniforme,float & moydistri_hasard,float & moydistance_distri_hasard,float & distancemoytaux_distri_hasard);
 void affichage_ligne_R(int nbval, string titre, float Tab[]);

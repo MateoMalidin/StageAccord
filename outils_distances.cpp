@@ -331,6 +331,26 @@ void vect_desaccords_annotation_aleatoire(int nbA,int nbIt,int nbC,int Vrand[]) 
     else cout << "desaccords aleatoires : calcul ou simulation à faire\n";
 }
 
+/*********************************************************
+indice de distribution des classes (prévalence) */
+/*
+float indicedistriclasse(int T[MAXIT][MAXA], int nbA, int nbIt, int nbC) {
+  float Tobs[nbC], Texp[nbC];
+  float Vexp = 1.0 / nbC;
+  for (int c = 0; c < nbC; c++) {
+    Texp[c] = Vexp;
+    Tobs[c] = 0;
+  }
+  for (int it = 0; it < nbIt; it++)
+    for (int a = 0; a < nbA; a++) {
+      int c = T[it][a];
+      Tobs[c]++;
+    }
+  for (int c = 0; c < nbC; c++)
+    Tobs[c] = 1.0 * Tobs[c] / (nbA * nbIt);
+  return khi_deux(Tobs, Texp, nbC);
+}*/
+
 //-----DISTANCES ENTRE DISTRIBUTIONS-----
 
 // min(x, y)
@@ -583,7 +603,7 @@ float distance_taux_distri_hasard(int T[MAXIT][MAXA], int nbA, int nbIt, int nbC
         else
           (Treel[ind])++;
     }
-    return man_vect_entier(Tcomb, Treel, 7);
+    return Jeffrey_vect_entier(Tcomb, Treel, 7);
   }
   else {
     cout << "pas de calcul prévu pour distance_taux_distri_hasard\n ";

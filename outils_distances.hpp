@@ -24,6 +24,7 @@ float cosinus_uniforme(float Tdist2[MAXCL][MAXCL], int nbC);
 int cmpfunct(const void* a, const void* b);
 void nb_desaccords_par_item(int TA[MAXIT][MAXA], int nbA, int nbIt, int Vreel[]);
 void vect_desaccords_annotation_aleatoire(int nbA, int nbIt, int nbC, int Vrand[]);
+float indicedistriclasse(int T[MAXIT][MAXA], int nbA, int nbIt, int nbC);
 int min(int x, int y);
 float min_vect_reel(float v[], int nbIt);
 float max_vect_reel(float v[], int nbIt);

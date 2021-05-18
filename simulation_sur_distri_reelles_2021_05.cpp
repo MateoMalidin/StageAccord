@@ -363,6 +363,24 @@ void transpose(int T[MAXIT][MAXA],int TT[MAXA][MAXIT],int nbIt,int nbA) {
       TT[j][i]=T[i][j];
 }
 
+/**** fonction du programme principal où est défini le facteur de correction du taux*/////
+
+/* char param[] = nom du corpus */
+
+void corrige(string corpus, int nbval, float moymtauxErRef[]) {
+  float prevalence[] = {0.63, 0.055, 0.26, 0.39, 0.54}; //valeurs entrées à la main actuellement en attendant calcul sur simulations
+  float confusion_classes[] = {0.67, 0.64, 0.50, 0.62, 0.59};
+  string Lnomcorpus[] = {"coref", "similarite", "opinion", "emotion", "newsletter"};
+  int ind = 0;
+  while ((ind < 5) && (corpus != Lnomcorpus[ind]))
+    ind++;
+  float correction = exp(prevalence[ind]);
+  //cout << "correct=" << correct << endl;
+  for (int i = 0; i < nbval; i++) {
+    moymtauxErRef[i] = moymtauxErRef[i] * correction;
+  }
+}
+
 void unplusnbGgroupe(int nbG,int RefIni[],int nbIt,int nbC,int TE[],float TEIt[][MAXCL],
 		     int nbA,float tauxErparAnnot,float sigmatauxEr,int choix1,int choix2,
 		     float & mtauxErRef,float & sigmatauxErRef,float & mtauxconf,
@@ -474,8 +492,8 @@ void affiche_res_series(int nbval,float tauxErparAnnot[],float moymtauxErRef[],f
 void write_res_series(string corpus, int nbval, float moykappa[], float moyalpha[], float moymtauxErRef[], float distancemoytaux_distri_hasard[]) {
   string nomfich1 = "./res/kappa_" + corpus + ".csv";
   string nomfich2 = "./res/alpha_" + corpus + ".csv";
-  string nomfich3 = "./res/alphaman_" + corpus + ".csv";
-  string nomfich4 = "./res/kappaman_" + corpus + ".csv";
+  string nomfich3 = "./res/alphaJ_" + corpus + ".csv";
+  string nomfich4 = "./res/kappaJ_" + corpus + ".csv";
   ofstream file1(nomfich1.c_str());
   ofstream file2(nomfich2.c_str());
   ofstream file3(nomfich3.c_str());
@@ -483,13 +501,13 @@ void write_res_series(string corpus, int nbval, float moykappa[], float moyalpha
   if (file1 && file2 && file3 && file4) {
     file1 << "kappa,taux" << endl;
     file2 << "alpha,taux" << endl;
-    file3 << "alphaman,taux" << endl;
-    file4 << "kappaman,taux" << endl;
+    file3 << "alphaJ,taux" << endl;
+    file4 << "kappaJ,taux" << endl;
     for (int nb = 0; nb < nbval; nb++) {
       file1 << moykappa[nb] << "," << moymtauxErRef[nb]  << endl;
       file2 << moyalpha[nb] << "," << moymtauxErRef[nb] << endl;
-      file3 << (moyalpha[nb] * (cos(distancemoytaux_distri_hasard[nb]))) << "," << (moymtauxErRef[nb] * exp(distancemoytaux_distri_hasard[nb])) << endl;
-      file4 << (moykappa[nb] * (cos(distancemoytaux_distri_hasard[nb]))) << "," << (moymtauxErRef[nb] * exp(distancemoytaux_distri_hasard[nb])) << endl;
+      file3 << (moyalpha[nb] * (cos(distancemoytaux_distri_hasard[nb]))) << "," << (moymtauxErRef[nb]) << endl;
+      file4 << (moykappa[nb] * (cos(distancemoytaux_distri_hasard[nb]))) << "," << (moymtauxErRef[nb]) << endl;
     }
   }
   else
@@ -510,6 +528,7 @@ void serie_expes(string corpus, int nbval,int nb,int nbG,int RefIni[],int nbIt,i
 		    moymtauxconf[i],moyalpha[i],moyalphaconf[i],moykappa[i],moycos_uniforme[i],
                     moydistri_hasard[i],moydistance_distri_hasard[i],distancemoytaux_distri_hasard[i]);
   }
+  corrige(corpus, nbval, moymtauxErRef);
   normalise(distancemoytaux_distri_hasard, nbval);
   affiche_res_series(nbval,tauxErparAnnot,moymtauxErRef,moysigmatauxErRef,moymtauxconf,moyalpha,
 		     moyalphaconf,moykappa,
