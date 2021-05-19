@@ -367,18 +367,14 @@ void transpose(int T[MAXIT][MAXA],int TT[MAXA][MAXIT],int nbIt,int nbA) {
 
 /* char param[] = nom du corpus */
 
-void corrige(string corpus, int nbval, float moymtauxErRef[]) {
+float correction(string corpus) {
   float prevalence[] = {0.63, 0.055, 0.26, 0.39, 0.54}; //valeurs entrées à la main actuellement en attendant calcul sur simulations
   float confusion_classes[] = {0.67, 0.64, 0.50, 0.62, 0.59};
   string Lnomcorpus[] = {"coref", "similarite", "opinion", "emotion", "newsletter"};
   int ind = 0;
   while ((ind < 5) && (corpus != Lnomcorpus[ind]))
     ind++;
-  float correction = exp(prevalence[ind]);
-  //cout << "correct=" << correct << endl;
-  for (int i = 0; i < nbval; i++) {
-    moymtauxErRef[i] = moymtauxErRef[i] * correction;
-  }
+  return exp(prevalence[ind]);
 }
 
 void unplusnbGgroupe(int nbG,int RefIni[],int nbIt,int nbC,int TE[],float TEIt[][MAXCL],
@@ -506,8 +502,8 @@ void write_res_series(string corpus, int nbval, float moykappa[], float moyalpha
     for (int nb = 0; nb < nbval; nb++) {
       file1 << moykappa[nb] << "," << moymtauxErRef[nb]  << endl;
       file2 << moyalpha[nb] << "," << moymtauxErRef[nb] << endl;
-      file3 << (moyalpha[nb] * (1 - (distancemoytaux_distri_hasard[nb] / 2))) << "," << ((moymtauxErRef[nb])) << endl;
-      file4 << (moykappa[nb] * (1 - (distancemoytaux_distri_hasard[nb] / 2))) << "," << ((moymtauxErRef[nb])) << endl;
+      file3 << (moyalpha[nb] * (1 - (distancemoytaux_distri_hasard[nb] / 2))) << "," << ((moymtauxErRef[nb]) * correction(corpus)) << endl;
+      file4 << (moykappa[nb] * (1 - (distancemoytaux_distri_hasard[nb] / 2))) << "," << ((moymtauxErRef[nb]) * correction(corpus)) << endl;
     }
   }
   else
@@ -528,7 +524,6 @@ void serie_expes(string corpus, int nbval,int nb,int nbG,int RefIni[],int nbIt,i
 		    moymtauxconf[i],moyalpha[i],moyalphaconf[i],moykappa[i],moycos_uniforme[i],
                     moydistri_hasard[i],moydistance_distri_hasard[i],distancemoytaux_distri_hasard[i]);
   }
-  corrige(corpus, nbval, moymtauxErRef);
   normalise(distancemoytaux_distri_hasard, nbval);
   affiche_res_series(nbval,tauxErparAnnot,moymtauxErRef,moysigmatauxErRef,moymtauxconf,moyalpha,
 		     moyalphaconf,moykappa,
