@@ -46,6 +46,7 @@ float B_vect_entier(int v1[],int v2[],int nbIt);
 float euc_vect_entier(int v1[], int v2[], int nbIt);
 float man_vect_entier(int v1[], int v2[], int nbIt);
 float totvar_vect_entier(int v1[], int v2[], int nbIt);
+float L2_vect_entier(int v1[], int v2[], int nbIt);
 float distance_vect_entier(int v1[], int v2[], int nbIt);
 float distance2_vect_entier(int v1[], int v2[], int nbIt);
 void distance_distri_item(int TA[MAXIT][MAXA], int nbA, int nbIt, int nbC, float& distance_annot_hasard, float& cosinus_annot_hasard);

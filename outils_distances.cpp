@@ -551,6 +551,15 @@ float totvar_vect_entier(int v1[], int v2[], int nbIt) {
   return (1.0 / 2.0) * sum;
 }
 
+// L2
+float L2_vect_entier(int v1[], int v2[], int nbIt) {
+  float sum;
+  for (int it = 0; it < nbIt; it++) {
+    sum += pow((v1[it] - v2[it]), 2);
+  }
+  return 1.0 * sum;
+}
+
 float distance_vect_entier(int v1[],int v2[],int nbIt) {
     float res=0;
     for (int it=0;it<nbIt;it++) {
@@ -612,7 +621,7 @@ float distance_taux_distri_hasard(int T[MAXIT][MAXA], int nbA, int nbIt, int nbC
         else
           (Treel[ind])++;
     }
-    return totvar_vect_entier(Tcomb, Treel, 7);
+    return L2_vect_entier(Tcomb, Treel, 7);
   }
   else {
     cout << "pas de calcul prévu pour distance_taux_distri_hasard\n ";
