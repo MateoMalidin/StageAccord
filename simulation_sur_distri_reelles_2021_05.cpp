@@ -488,8 +488,8 @@ void affiche_res_series(int nbval,float tauxErparAnnot[],float moymtauxErRef[],f
 void write_res_series(string corpus, int nbval, float moykappa[], float moyalpha[], float moymtauxErRef[], float distancemoytaux_distri_hasard[]) {
   string nomfich1 = "./res/kappa_" + corpus + ".csv";
   string nomfich2 = "./res/alpha_" + corpus + ".csv";
-  string nomfich3 = "./res/alphaH_" + corpus + ".csv";
-  string nomfich4 = "./res/kappaH_" + corpus + ".csv";
+  string nomfich3 = "./res/alphatotvar_" + corpus + ".csv";
+  string nomfich4 = "./res/kappatotvar_" + corpus + ".csv";
   ofstream file1(nomfich1.c_str());
   ofstream file2(nomfich2.c_str());
   ofstream file3(nomfich3.c_str());
@@ -497,8 +497,8 @@ void write_res_series(string corpus, int nbval, float moykappa[], float moyalpha
   if (file1 && file2 && file3 && file4) {
     file1 << "kappa,taux" << endl;
     file2 << "alpha,taux" << endl;
-    file3 << "alphaH,taux" << endl;
-    file4 << "kappaH,taux" << endl;
+    file3 << "alphatotvar,taux" << endl;
+    file4 << "kappatotvar,taux" << endl;
     for (int nb = 0; nb < nbval; nb++) {
       file1 << moykappa[nb] << "," << moymtauxErRef[nb]  << endl;
       file2 << moyalpha[nb] << "," << moymtauxErRef[nb] << endl;

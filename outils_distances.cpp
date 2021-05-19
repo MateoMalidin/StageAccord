@@ -633,7 +633,7 @@ float distance_taux_distri_hasard(int T[MAXIT][MAXA], int nbA, int nbIt, int nbC
         else
           (Treel[ind])++;
     }
-    return H_vect_entier(Tcomb, Treel, 7);
+    return totvar_vect_entier(Tcomb, Treel, 7);
   }
   else {
     cout << "pas de calcul prévu pour distance_taux_distri_hasard\n ";
