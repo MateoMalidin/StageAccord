@@ -501,12 +501,12 @@ float Jdiv_vect_entier(int v1[],int v2[],int nbIt) {
   float sum;
   for (int it = 0; it < nbIt; it++) {
     if (v2[it] != 0)
-      sum += (v1[it] - v2[it]) * log2(v1[it]/v2[it]);
+      sum += (v1[it] - v2[it]) * log2(v1[it] / v2[it]);
   }
   return 1.0 * sum;
 }
 
-// Hellinger distance
+// Hellinger cofficient
 float H_vect_entier(int v1[],int v2[],int nbIt) {
   float sum;
   for (int it = 0; it < nbIt; it ++) {
