@@ -630,7 +630,7 @@ int main(int n,char * param[]) {
     //float TabtauxErparAnnot[12]={0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.6,0.7};
     int nbtests = 10;
     //float TabtauxErparAnnot[] = {0.075, 0.1, 0.125, 0.15, 0.175, 0.2, 0.25, 0.3, 0.35, 0.4};
-    float TabtauxErparAnnot[] = {0.075, 0.1, 0.125, 0.15, 0.175, 0.2, 0.225, 0.25, 0.275, 0.3};
+    float TabtauxErparAnnot[] = {0.075, 0.085, 0.095, 0.105, 0.115, 0.125, 0.235, 0.245, 0.255, 0.265};
     float moymtauxErRef[nbtests], moysigmatauxErRef[nbtests], moymtauxconf[nbtests], moyalpha[nbtests], moyalphaconf[nbtests], moykappa[nbtests], moycos_uniforme[nbtests], moydistri_hasard[nbtests], moydistance_distri_hasard[nbtests], distancemoytaux_distri_hasard[nbtests];
     serie_expes(args[c], nbtests,nb, nbG, Ref, nbIt, nbC, TE, TEIt, nbA, TabtauxErparAnnot, sigmatauxEr, choix1, choix2,moymtauxErRef, moysigmatauxErRef, moymtauxconf, moyalpha, moyalphaconf, moykappa, moycos_uniforme, moydistri_hasard, moydistance_distri_hasard, distancemoytaux_distri_hasard);
     c++;
