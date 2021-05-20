@@ -430,21 +430,21 @@ void nbfois_unplusnbGgroupe(int nb,int nbG,int RefIni[],int nbIt,int nbC,int TE[
           distance_distri_hasard,distancetaux_distri_hasard;
     moymtauxErRef=0;moysigmatauxErRef=0;moymtauxconf=0;moyalpha=0;moyalphaconf=0;
     moykappa=0;moydistri_hasard=0;moydistance_distri_hasard=0;
-    for (int i=0;i<nb;i++) {
+    for (int i = 0; i < nb; i++) {
       //cout << "\n unplusnbGgroupe, i=" << i << endl;
       unplusnbGgroupe(nbG,RefIni,nbIt,nbC,TE,TEIt,nbA,tauxErparAnnot,sigmatauxEr,choix1,choix2,
 		      mtauxErRef,sigmatauxErRef,mtauxconf,alpha,alphaconf,kappa,cos_uniforme,
 		      distri_hasard,distance_distri_hasard,distancetaux_distri_hasard);
-        moymtauxErRef+=mtauxErRef;
-        moysigmatauxErRef+=0;
-        moymtauxconf+=mtauxconf;
-        moyalpha+=alpha;
-	      moykappa+=kappa;
-        moyalphaconf+=alphaconf;
-        moycos_uniforme+=cos_uniforme;
-        moydistri_hasard+=distri_hasard;
-        moydistance_distri_hasard+=distance_distri_hasard;
-        distancemoytaux_distri_hasard+=distancetaux_distri_hasard;
+          moymtauxErRef+=mtauxErRef;
+          moysigmatauxErRef+=0;
+          moymtauxconf+=mtauxconf;
+          moyalpha+=alpha;
+  	      moykappa+=kappa;
+          moyalphaconf+=alphaconf;
+          moycos_uniforme+=cos_uniforme;
+          moydistri_hasard+=distri_hasard;
+          moydistance_distri_hasard+=distance_distri_hasard;
+          distancemoytaux_distri_hasard+=distancetaux_distri_hasard;
     }
     moymtauxErRef=moymtauxErRef/nb;
     moymtauxconf=moymtauxconf/nb;
@@ -488,8 +488,8 @@ void affiche_res_series(int nbval,float tauxErparAnnot[],float moymtauxErRef[],f
 void write_res_series(string corpus, int nbval, float moykappa[], float moyalpha[], float moymtauxErRef[], float distancemoytaux_distri_hasard[]) {
   string nomfich1 = "./res/kappa_" + corpus + ".csv";
   string nomfich2 = "./res/alpha_" + corpus + ".csv";
-  string nomfich3 = "./res/alphatotvar_" + corpus + ".csv";
-  string nomfich4 = "./res/kappatotvar_" + corpus + ".csv";
+  string nomfich3 = "./res/alphaH_" + corpus + ".csv";
+  string nomfich4 = "./res/kappaH_" + corpus + ".csv";
   ofstream file1(nomfich1.c_str());
   ofstream file2(nomfich2.c_str());
   ofstream file3(nomfich3.c_str());
@@ -497,8 +497,8 @@ void write_res_series(string corpus, int nbval, float moykappa[], float moyalpha
   if (file1 && file2 && file3 && file4) {
     file1 << "kappa,taux" << endl;
     file2 << "alpha,taux" << endl;
-    file3 << "alphatotvar,taux" << endl;
-    file4 << "kappatotvar,taux" << endl;
+    file3 << "alphaH,taux" << endl;
+    file4 << "kappaH,taux" << endl;
     for (int nb = 0; nb < nbval; nb++) {
       file1 << moykappa[nb] << "," << moymtauxErRef[nb]  << endl;
       file2 << moyalpha[nb] << "," << moymtauxErRef[nb] << endl;
@@ -614,7 +614,7 @@ int main(int n,char * param[]) {
     int Tabannot[nbA][MAXIT];
 
     int nbG = 100; //nb de groupes auquel on compare un groupe, 100 par défaut
-    int nb = 100; //à revoir
+    int nb = 50; //à revoir
 
     // SERIES d'expé
     int choix1 = 1, choix2 = 1;
@@ -629,7 +629,8 @@ int main(int n,char * param[]) {
 
     //float TabtauxErparAnnot[12]={0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.6,0.7};
     int nbtests = 10;
-    float TabtauxErparAnnot[] = {0.075, 0.1, 0.125, 0.15, 0.175, 0.2, 0.25, 0.3, 0.35, 0.4};
+    //float TabtauxErparAnnot[] = {0.075, 0.1, 0.125, 0.15, 0.175, 0.2, 0.25, 0.3, 0.35, 0.4};
+    float TabtauxErparAnnot[] = {0.075, 0.1, 0.125, 0.15, 0.175, 0.2, 0.225, 0.25, 0.275, 0.3};
     float moymtauxErRef[nbtests], moysigmatauxErRef[nbtests], moymtauxconf[nbtests], moyalpha[nbtests], moyalphaconf[nbtests], moykappa[nbtests], moycos_uniforme[nbtests], moydistri_hasard[nbtests], moydistance_distri_hasard[nbtests], distancemoytaux_distri_hasard[nbtests];
     serie_expes(args[c], nbtests,nb, nbG, Ref, nbIt, nbC, TE, TEIt, nbA, TabtauxErparAnnot, sigmatauxEr, choix1, choix2,moymtauxErRef, moysigmatauxErRef, moymtauxconf, moyalpha, moyalphaconf, moykappa, moycos_uniforme, moydistri_hasard, moydistance_distri_hasard, distancemoytaux_distri_hasard);
     c++;
