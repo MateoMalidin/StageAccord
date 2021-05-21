@@ -272,6 +272,7 @@ float distance_uniforme(float Tdist2[MAXCL][MAXCL],int nbC) {
             S+=abs(Tdist2[l][c]-moy);
     return S;
 }
+
 float cosinus_uniforme(float Tdist2[MAXCL][MAXCL],int nbC) {
     int nb=(nbC*(nbC-1))/2;
     float moy=1.0/(1.0*nb);
@@ -291,6 +292,7 @@ float cosinus_uniforme(float Tdist2[MAXCL][MAXCL],int nbC) {
 int cmpfunct(const void * a,const void * b) {
   return (*(int *) a-*(int *)b);
 }
+
 void nb_desaccords_par_item(int TA[MAXIT][MAXA],int nbA,int nbIt,int Vreel[]){
     /* //"la table..."
     //cout << "annotations\n";
@@ -330,7 +332,6 @@ void vect_desaccords_annotation_aleatoire(int nbA,int nbIt,int nbC,int Vrand[]) 
     }
     else cout << "desaccords aleatoires : calcul ou simulation à faire\n";
 }
-
 
 
 //-----DISTANCES ENTRE DISTRIBUTIONS-----
@@ -633,7 +634,7 @@ float distance_taux_distri_hasard(int T[MAXIT][MAXA], int nbA, int nbIt, int nbC
         else
           (Treel[ind])++;
     }
-    return H_vect_entier(Tcomb, Treel, 7);
+    return totvar_vect_entier(Tcomb, Treel, 7);
   }
   else {
     cout << "pas de calcul prévu pour distance_taux_distri_hasard\n ";
