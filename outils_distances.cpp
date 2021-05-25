@@ -158,86 +158,91 @@ float similaritecos2(vector<float> v1, vector<float> v2, int nbIt) {
     v2car += 1.0 * v2[it] * v2[it];
         num += 1.0 * v1[it] * v2[it];
     }
-    float res=(num/(sqrt(v1car)*sqrt(v2car)));
+    float res = (num / (sqrt(v1car) * sqrt(v2car)));
     return res;
 }
 
 //distance coisinus entre v1 : mesures de desaccords par item
-void mesuresrepartitiondesaccords(int TConf[MAXCL][MAXCL],int T[MAXIT][MAXA],
-                                int nbC,int nbIt,int nbAR,float & sim_uniforme,float & moy, float & sigma) {
-    int nbdesa=0;
-    for (int c1=0;c1<nbC;c1++) {
-        for (int c2=0;c2<=c1;c2++) {
-            if (c1!=c2) nbdesa+=TConf[c1][c2];
-        }
+void mesuresrepartitiondesaccords(int TConf[MAXCL][MAXCL], int T[MAXIT][MAXA], int nbC, int nbIt, int nbAR, float & sim_uniforme, float & moy, float & sigma) {
+  int nbdesa = 0;
+  for (int c1 = 0; c1 < nbC; c1++) {
+    for (int c2 = 0; c2 <= c1;c2++) {
+      if (c1 != c2)
+        nbdesa += TConf[c1][c2];
     }
-    vector<float> v1(nbIt),v2(nbIt);
-    for (int i=0;i<nbIt;i++) {
-        v1[i]=(1.0*nbdesa)/nbIt;
-    }
-    float S=0,S2=0,ajout;
-    for (int it=0;it<nbIt;it++) {
-        v2[it]=0;
-        for (int a1=0;a1<nbAR;a1++)
-            for (int a2=0;a2<a1;a2++)
-                if (T[it][a1]!=T[it][a2])
-                    v2[it]=v2[it]+1;
-        ajout=(2.0*v2[it])/(nbAR*(nbAR-1));
-        S+=ajout;
-        S2+=ajout*ajout;
-    }
-    sim_uniforme=similaritecos2(v1,v2,nbIt);
-    moy=S/nbIt;
-    sigma=sqrt(S2/nbIt-moy*moy);
-    cout << "sim=" << sim_uniforme <<", moy=" << moy << ", sigma=" <<sigma << endl;
+  }
+  vector<float> v1(nbIt), v2(nbIt);
+  for (int i = 0; i < nbIt; i++) {
+    v1[i] = (1.0 * nbdesa) / nbIt;
+  }
+  float S = 0, S2 = 0, ajout;
+  for (int it = 0; it < nbIt; it++) {
+    v2[it] = 0;
+    for (int a1 = 0; a1 < nbAR; a1++)
+      for (int a2 = 0; a2 < a1; a2++)
+        if (T[it][a1] != T[it][a2])
+          v2[it] = v2[it] + 1;
+    ajout = (2.0 * v2[it]) / (nbAR * (nbAR-1));
+    S += ajout;
+    S2 += ajout * ajout;
+  }
+  sim_uniforme = similaritecos2(v1, v2, nbIt);
+  moy = S / nbIt;
+  sigma = sqrt(S2 / nbIt - moy * moy);
+  cout << "sim = " << sim_uniforme <<", moy = " << moy << ", sigma = " << sigma << endl;
 }
 
 //taux d'écarts entre deux ref, pondéré par la distance entre classes
-float tauxdiff2Refdist(int Ref1[],int Ref2[],int nbIt,float Tdist[MAXCL][MAXCL]) {
-    float sommediff = 0;
-    int c1,c2;
-    for (int i=0;i<nbIt;i++) {
-        c1 = Ref1[i];
-        c2 = Ref2[i];
-        if (c1 != c2)
-          sommediff += Tdist[c1][c2];
-    }
-    return sommediff / nbIt;
+float tauxdiff2Refdist(int Ref1[], int Ref2[], int nbIt, float Tdist[MAXCL][MAXCL]) {
+  float sommediff = 0;
+  int c1, c2;
+  for (int i = 0; i < nbIt; i++) {
+    c1 = Ref1[i];
+    c2 = Ref2[i];
+    if (c1 != c2)
+      sommediff += Tdist[c1][c2];
+  }
+  return sommediff / nbIt;
 }
 
 /***********************************************************/
-void calculmoytaux_ecartdist(int TRefA[][MAXIT],int nbG,int nbIt,float Tdist[MAXCL][MAXCL],
-                             float & mtauxecart,float & ettauxecart){
-    mtauxecart=0;ettauxecart=0;
-    float tecarre=0;
-    int ci,cj;
-    for (int i=1;i<nbG;i++) {
-        for (int j=0;j<i;j++) {//pour chaque paire de groupes d'annotateurs
-            float sommeecarts=0;
-            for (int it=0;it<nbIt;it++){
-                ci=TRefA[i][it];cj=TRefA[j][it];
-                if (ci!=cj) sommeecarts+=Tdist[ci][cj];
+void calculmoytaux_ecartdist(int TRefA[][MAXIT], int nbG, int nbIt, float Tdist[MAXCL][MAXCL], float & mtauxecart, float & ettauxecart) {
+  mtauxecart = 0;
+  ettauxecart = 0;
+  float tecarre = 0;
+  int ci, cj;
+  for (int i = 1; i < nbG; i++) {
+    for (int j = 0; j < i; j++) { //pour chaque paire de groupes d'annotateurs
+      float sommeecarts = 0;
+      for (int it = 0; it < nbIt; it++) {
+        ci = TRefA[i][it];
+        cj = TRefA[j][it];
+        if (ci != cj)
+          sommeecarts += Tdist[ci][cj];
            // cout << "nb ecarts=" << nbecarts << endl;
-            }
-            float te=sommeecarts/nbIt;
-            float te2=te*te;
-            mtauxecart+=te;
-            tecarre+=te2;
-        }
+      }
+      float te = sommeecarts / nbIt;
+      float te2 = te * te;
+      mtauxecart += te;
+      tecarre += te2;
     }
-    mtauxecart=mtauxecart/(nbG*(nbG-1));
-    ettauxecart=tecarre/(nbG*(nbG-1)) - (mtauxecart*mtauxecart);
+  }
+  mtauxecart = mtauxecart / (nbG * (nbG - 1));
+  ettauxecart = tecarre / (nbG * (nbG - 1)) - (mtauxecart * mtauxecart);
 }
+
 /*************************************************/
 // test de taug=1/(somme Tconf)tauGsim
-float estimationtauxG(float tauGsim,float Tdist2[MAXCL][MAXCL],int nbC) {
-    float S=0;
-    for (int c1=0;c1<nbC;c1++)
-        for (int c2=c1+1;c2<nbC;c2++) {
-            if (Tdist2[c1][c2]>=0.001) S+=Tdist2[c1][c2];
-        }
-    return tauGsim/S;
+float estimationtauxG(float tauGsim, float Tdist2[MAXCL][MAXCL], int nbC) {
+  float S = 0;
+  for (int c1 = 0; c1 < nbC; c1++)
+    for (int c2 = c1 + 1; c2 < nbC; c2++) {
+      if (Tdist2[c1][c2] >= 0.001)
+        S += Tdist2[c1][c2];
+    }
+  return tauGsim / S;
 }
+
 /*
 float estimationtauxG(float tauGsim,float Tdist[MAXCL][MAXCL],int nbC) {
     float S=0;
@@ -246,93 +251,99 @@ float estimationtauxG(float tauGsim,float Tdist[MAXCL][MAXCL],int nbC) {
     //cout << "prod=" << S << endl;
     return tauGsim/S;// pourquoi 4 ????
 }*/
+
 //normalisation sur les i\=j
-void Tdist2Tdist2(float Tdist[MAXCL][MAXCL],int nbC,float Tdist2[MAXCL][MAXCL]){
-    float S=0;
-    for (int i=0;i<nbC;i++)
-        for (int j=i+1;j<nbC;j++)
-            S+=Tdist[i][j];
-    for (int i=0;i<nbC;i++)
-        for (int j=0;j<nbC;j++) {
-            if (i==j) Tdist2[i][j]=Tdist[i][j];
-            else {
-                if (i<j) Tdist2[i][j]=Tdist[i][j]/S;
-                else Tdist2[i][j]=Tdist[j][i]/S;
-            }
-        }
+void Tdist2Tdist2(float Tdist[MAXCL][MAXCL], int nbC, float Tdist2[MAXCL][MAXCL]) {
+  float S = 0;
+  for (int i = 0; i < nbC; i++)
+    for (int j = i + 1; j < nbC; j++)
+      S += Tdist[i][j];
+  for (int i = 0; i < nbC; i++)
+    for (int j = 0; j < nbC; j++) {
+      if (i == j)
+        Tdist2[i][j] = Tdist[i][j];
+      else {
+        if (i < j)
+          Tdist2[i][j] = Tdist[i][j] / S;
+        else
+          Tdist2[i][j] = Tdist[j][i] / S;
+      }
+    }
 }
 
 //distance à une répartition uniforme des cij i\=j
-float distance_uniforme(float Tdist2[MAXCL][MAXCL],int nbC) {
-    int nb=(nbC*(nbC-1))/2;
-    float moy=1.0/(1.0*nb);
-    float S=0;
-    for (int l=0;l<nbC-1;l++)
-        for (int c=l+1;c<nbC;c++)
-            S+=abs(Tdist2[l][c]-moy);
-    return S;
+float distance_uniforme(float Tdist2[MAXCL][MAXCL], int nbC) {
+  int nb = (nbC * (nbC - 1)) / 2;
+  float moy = 1.0 / (1.0 * nb);
+  float S = 0;
+  for (int l = 0; l < nbC - 1; l++)
+    for (int c = l + 1; c < nbC; c++)
+      S += abs(Tdist2[l][c] - moy);
+  return S;
 }
 
-float cosinus_uniforme(float Tdist2[MAXCL][MAXCL],int nbC) {
-    int nb=(nbC*(nbC-1))/2;
-    float moy=1.0/(1.0*nb);
-    float N1=0,N2=0,Sc=0;
-    for (int l=0;l<nbC-1;l++)
-        for (int c=l+1;c<nbC;c++) {
-            Sc+=Tdist2[l][c]*moy;
-            N1+=Tdist2[l][c]*Tdist2[l][c];
-            N2+=moy*moy;
-        }
-    float res=Sc/(sqrt(N1)*sqrt(N2));
-    return res;
+float cosinus_uniforme(float Tdist2[MAXCL][MAXCL], int nbC) {
+  int nb = (nbC * (nbC - 1)) / 2;
+  float moy = 1.0 / (1.0 * nb);
+  float N1 = 0, N2 = 0, Sc = 0;
+  for (int l = 0; l < nbC - 1; l++)
+    for (int c = l + 1; c < nbC; c++) {
+      Sc += Tdist2[l][c] * moy;
+      N1 += Tdist2[l][c] * Tdist2[l][c];
+      N2 += moy * moy;
+    }
+  float res = Sc / (sqrt(N1) * sqrt(N2));
+  return res;
 }
 
 //distance à une répartition du nombre de désaccords sur les items par une annotation au hasard...
 //1 - annotation réelle (TA)
-int cmpfunct(const void * a,const void * b) {
-  return (*(int *) a-*(int *)b);
+int cmpfunct(const void * a, const void * b) {
+  return (*(int *)a - *(int *)b);
 }
 
-void nb_desaccords_par_item(int TA[MAXIT][MAXA],int nbA,int nbIt,int Vreel[]){
-    /* //"la table..."
-    //cout << "annotations\n";
-    affiche_annot(TA,nbA,nbIt);
-    cout << "fin annotations\n";*/
-    for (int it=0;it<nbIt;it++){
-        Vreel[it]=0;
-        for (int a1=0;a1<nbA;a1++)
-            for (int a2=a1+1;a2<nbA;a2++)
-                if (TA[it][a1]!=TA[it][a2]) Vreel[it]++;
-    }
-    //sort(Vreel,Vreel+nbIt);
-    qsort(Vreel,MAXIT,sizeof(int),cmpfunct);
-    /* cout << "distri réelle\n";
-    for (int it=0;it<nbIt;it++) cout << Vreel[it] << " ";
-    cout << endl;*/
+void nb_desaccords_par_item(int TA[MAXIT][MAXA], int nbA, int nbIt, int Vreel[]) {
+  /* //"la table..."
+  //cout << "annotations\n";
+  affiche_annot(TA,nbA,nbIt);
+  cout << "fin annotations\n";*/
+  for (int it = 0; it < nbIt; it++) {
+    Vreel[it] = 0;
+    for (int a1 = 0; a1 < nbA; a1++)
+      for (int a2 = a1 + 1; a2 < nbA; a2++)
+        if (TA[it][a1] != TA[it][a2])
+          Vreel[it]++;
+  }
+  //sort(Vreel,Vreel+nbIt);
+  qsort(Vreel, MAXIT, sizeof(int), cmpfunct);
+  /* cout << "distri réelle\n";
+  for (int it=0;it<nbIt;it++) cout << Vreel[it] << " ";
+  cout << endl;*/
 }
+
 //2 - le nombre de désaccords n'est pas binômial : car les désaccords sur les paires ne sont pas indépendants
 // on compare donc avec une annotation "au hasard" : on pourrait la simuler, dans le cas de 5 classes/5annotateurs,
 // on peut la calculer
 
-void vect_desaccords_annotation_aleatoire(int nbA,int nbIt,int nbC,int Vrand[]) {
-    if ((nbC==5)&&(nbA==5)) {
-        int Tval[7]={0,4,6,7,8,9,10};
-        int Tcomb[7]={1,20,40,120,180,240,24};
-        int it=0;
-        float retenue=0;
-        for (int v=0;v<7;v++) {
-            float nbvr=(Tcomb[v]*1.0*nbIt/625)+retenue;
-            int nbv=round(nbvr);
-            retenue=nbvr-round(nbvr);
-            for (int i=0;i<nbv;i++) {
-                Vrand[it]=Tval[v];
-                it++;
-            }
-        }
+void vect_desaccords_annotation_aleatoire(int nbA, int nbIt, int nbC, int Vrand[]) {
+  if ((nbC == 5) && (nbA == 5)) {
+    int Tval[7] = {0, 4, 6, 7, 8, 9, 10};
+    int Tcomb[7] = {1, 20, 40, 120, 180, 240, 24};
+    int it = 0;
+    float retenue = 0;
+    for (int v = 0; v < 7; v++) {
+      float nbvr = (Tcomb[v] * 1.0 * nbIt / 625) + retenue;
+      int nbv = round(nbvr);
+      retenue = nbvr - round(nbvr);
+      for (int i = 0; i < nbv; i++) {
+        Vrand[it] = Tval[v];
+        it++;
+      }
     }
-    else cout << "desaccords aleatoires : calcul ou simulation à faire\n";
+  }
+  else
+    cout << "desaccords aleatoires : calcul ou simulation à faire\n";
 }
-
 
 //-----DISTANCES ENTRE DISTRIBUTIONS-----
 
@@ -573,43 +584,43 @@ float indicedistriclasse(int T[MAXIT][MAXA], int nbA, int nbIt, int nbC) {
   return chi2_vect_reel(Tobs, Texp, nbC);
 }
 
-float distance_vect_entier(int v1[],int v2[],int nbIt) {
-    float res=0;
-    for (int it=0;it<nbIt;it++) {
-        res+=abs(v1[it]-v2[it]);
-    }
-    res=(1.0*res)/nbIt;
-    return res;
+float distance_vect_entier(int v1[], int v2[], int nbIt) {
+  float res = 0;
+  for (int it = 0; it < nbIt; it++) {
+    res += abs(v1[it] - v2[it]);
+  }
+  res = (1.0 * res) / nbIt;
+  return res;
 }
 
 //on compare le nombre d'items ayant entre 0 et 4 modifs (moins de 25%)
-float distance2_vect_entier(int v1[],int v2[],int nbIt){
-    int S1=0,S2=0;
-    int i=0;
-    while (v1[i]<=0) {
-        S1++;i++;
-    }
-    i=0;
-    while (v2[i]<=0) {
-        S2++;i++;
-    }
-    return (1.0*abs(S1-S2)/nbIt);
+float distance2_vect_entier(int v1[], int v2[], int nbIt) {
+  int S1 = 0, S2 = 0;
+  int i = 0;
+  while (v1[i] <= 0) {
+    S1++;
+    i++;
+  }
+  i = 0;
+  while (v2[i] <= 0) {
+    S2++;
+    i++;
+  }
+  return (1.0 * abs(S1 - S2) / nbIt);
 }
 
-void KL_distri_item(int TA[MAXIT][MAXA],int nbA,int nbIt,int nbC,
-                           float & distance_annot_hasard,float & cosinus_annot_hasard){
-
-    int VdesReel[nbIt],Vrand[nbIt];
-    nb_desaccords_par_item(TA,nbA,nbIt,VdesReel);
-    //cout << "VdesReel= ";
-    //for (int i=0;i<nbIt;i++) cout << VdesReel[i] << " ";
-    //vect_desaccords_annotation_aleatoire(nbA,nbIt,nbC,Vrand);
-    //cout << "\nVrand= ";
-    //for (int i=0;i<nbIt;i++) cout << Vrand[i] << " ";
-    //cout << endl;
-    cosinus_annot_hasard=cosinus_vect_entier(Vrand,VdesReel,nbIt);
-    //distance_annot_hasard=distance_vect_entier(Vrand,VdesReel,nbIt);
-    distance_annot_hasard=distance2_vect_entier(Vrand,VdesReel,nbIt);
+void KL_distri_item(int TA[MAXIT][MAXA], int nbA, int nbIt, int nbC, float & distance_annot_hasard, float & cosinus_annot_hasard) {
+  int VdesReel[nbIt], Vrand[nbIt];
+  nb_desaccords_par_item(TA, nbA, nbIt, VdesReel);
+  //cout << "VdesReel= ";
+  //for (int i=0;i<nbIt;i++) cout << VdesReel[i] << " ";
+  //vect_desaccords_annotation_aleatoire(nbA,nbIt,nbC,Vrand);
+  //cout << "\nVrand= ";
+  //for (int i=0;i<nbIt;i++) cout << Vrand[i] << " ";
+  //cout << endl;
+  cosinus_annot_hasard = cosinus_vect_entier(Vrand, VdesReel, nbIt);
+  //distance_annot_hasard=distance_vect_entier(Vrand,VdesReel,nbIt);
+  distance_annot_hasard = distance2_vect_entier(Vrand, VdesReel, nbIt);
 }
 
 //Rend, dans le cas où l'on a 5 classes et 5 annotateurs, le cosinus entre 2 vecteurs dont les composantes correspondent au nombre de désaccords possibles par item entre les paires d'annotateurs :
@@ -634,7 +645,7 @@ float distance_taux_distri_hasard(int T[MAXIT][MAXA], int nbA, int nbIt, int nbC
         else
           (Treel[ind])++;
     }
-    return totvar_vect_entier(Tcomb, Treel, 7);
+    return H_vect_entier(Tcomb, Treel, 7);
   }
   else {
     cout << "pas de calcul prévu pour distance_taux_distri_hasard\n ";
