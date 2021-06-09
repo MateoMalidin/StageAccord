@@ -511,7 +511,7 @@ float Jdiv_vect_entier(int v1[],int v2[],int nbIt) {
 }
 
 // Hellinger cofficient
-float H_vect_entier(int v1[],int v2[],int nbIt) {
+float H_vect_reel(float v1[], float v2[], int nbIt) {
   float sum;
   for (int it = 0; it < nbIt; it ++) {
     sum += sqrt(v1[it] * v2[it]);
@@ -629,8 +629,8 @@ void KL_distri_item(int TA[MAXIT][MAXA], int nbA, int nbIt, int nbC, float & dis
 //     2 - vecteur observé dans l'annotation réelle
 float distance_taux_distri_hasard(int T[MAXIT][MAXA], int nbA, int nbIt, int nbC) {
   if ((nbC == 5) && (nbA == 5)) {
-    int Tcomb[7] = {1, 20, 40, 120, 180, 240, 24};
-    int Treel[7] = {0, 0, 0, 0, 0, 0, 0};
+    float Tcomb[7] = {1.0, 20.0, 40.0, 120.0, 180.0, 240.0, 24.0};
+    float Treel[7] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
     int Tval[7] = {0, 4, 6, 7, 8, 9, 10};
     for (int it = 0; it < nbIt; it++) {
       int nbdes = 0;
@@ -645,7 +645,18 @@ float distance_taux_distri_hasard(int T[MAXIT][MAXA], int nbA, int nbIt, int nbC
         else
           (Treel[ind])++;
     }
-    return H_vect_entier(Tcomb, Treel, 7);
+    float sumComb = 0.0, sumReel = 0.0;
+    for (int it = 0; it < 7; it++) {
+      sumComb += Tcomb[it];
+      sumReel += Treel[it];
+    }
+    for (int it = 0; it < 7; it++) {
+      Tcomb[it] = Tcomb[it] / sumComb;
+      cout << " | " << Tcomb[it] << " | ";
+      Treel[it] = Treel[it] / sumReel;
+    }
+    cout << endl;
+    return H_vect_reel(Tcomb, Treel, 7);
   }
   else {
     cout << "pas de calcul prévu pour distance_taux_distri_hasard\n ";

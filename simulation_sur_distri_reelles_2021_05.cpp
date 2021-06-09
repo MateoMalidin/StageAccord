@@ -505,8 +505,8 @@ void write_res_series(string corpus, int nbval, float moykappa[], float moyalpha
     for (int nb = 0; nb < nbval; nb++) {
       file1 << moykappa[nb] << "," << moymtauxErRef[nb]  << endl;
       file2 << moyalpha[nb] << "," << moymtauxErRef[nb] << endl;
-      file3 << (moyalpha[nb] * (1 - (distancemoytaux_distri_hasard[nb] / 2))) << "," << ((moymtauxErRef[nb])) << endl;
-      file4 << (moykappa[nb] * (1 - (distancemoytaux_distri_hasard[nb] / 2))) << "," << ((moymtauxErRef[nb])) << endl;
+      file3 << (moyalpha[nb] * (1 - (distancemoytaux_distri_hasard[nb]))) << "," << ((moymtauxErRef[nb])) << endl;
+      file4 << (moykappa[nb] * (1 - (distancemoytaux_distri_hasard[nb]))) << "," << ((moymtauxErRef[nb])) << endl;
     }
   }
   else
@@ -519,7 +519,7 @@ void serie_expes(string corpus, int nbval, int nb, int nbG, int RefIni[], int nb
     cout << "test = " << i << endl;
     nbfois_unplusnbGgroupe(nb, nbG, RefIni, nbIt, nbC, TE, TEIt, nbA, tauxErparAnnot[i], sigmatauxEr, choix1, choix2, moymtauxErRef[i], moysigmatauxErRef[i], moymtauxconf[i], moyalpha[i], moyalphaconf[i], moykappa[i], moycos_uniforme[i], moydistri_hasard[i], moydistance_distri_hasard[i], distancemoytaux_distri_hasard[i]);
   }
-  normalise(distancemoytaux_distri_hasard, nbval);
+  //normalise(distancemoytaux_distri_hasard, nbval);
   affiche_res_series(nbval, tauxErparAnnot, moymtauxErRef, moysigmatauxErRef, moymtauxconf, moyalpha, moyalphaconf, moykappa, moycos_uniforme, moydistri_hasard, moydistance_distri_hasard, distancemoytaux_distri_hasard);
   write_res_series(corpus, nbval, moykappa, moyalpha, moymtauxErRef, distancemoytaux_distri_hasard);
 }
@@ -601,7 +601,7 @@ int main(int n, char * param[]) {
     nbErparA.resize(nbA);
     int Tabannot[nbA][MAXIT];
     int nbG = 100; //nb de groupes auquel on compare un groupe, 100 par défaut
-    int nb = 50; //à revoir
+    int nb = 100; //à revoir
     // SERIES d'expé
     int choix1 = 1, choix2 = 1;
     //I - Variations mesure d'accords/taux d'écart entre Rf

@@ -41,7 +41,7 @@ float KL_vect_entier(int v1[], int v2[], int nbIt);
 float Jeffrey_vect_entier(int v1[], int v2[], int nbIt);
 float sym_vect_entier(int v1[],int v2[],int nbIt);
 float Jdiv_vect_entier(int v1[],int v2[],int nbIt);
-float H_vect_entier(int v1[],int v2[],int nbIt);
+float H_vect_reel(float v1[],float v2[],int nbIt);
 float B_vect_entier(int v1[],int v2[],int nbIt);
 float euc_vect_entier(int v1[], int v2[], int nbIt);
 float man_vect_entier(int v1[], int v2[], int nbIt);
