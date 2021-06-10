@@ -58,5 +58,6 @@ float ecart_type_TauxDiffRef(int vnRef[][MAXIT], float TDF, int n, int nbo);
 void  affiche_Ref(int Ref[], int nbIt);
 void affiche_annot(int  Tabannot[][MAXA], int nbIt, int nbA);
 int comparefloat (const void* a, const void* b);
+void distri_classes(int nbC, int nbIt, int nbAR, int T[MAXIT][MAXA], float distri_classes[]);
 
 #endif

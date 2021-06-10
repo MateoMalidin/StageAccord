@@ -26,8 +26,8 @@ void unplusnbGgroupe(int nbG,int RefIni[],int nbIt,int nbC,int TE[],float TEIt[]
 void nbfois_unplusnbGgroupe(int nb,int nbG,int RefIni[],int nbIt,int nbC,int TE[],float TEIt[][MAXCL],int nbA,float tauxErparAnnot,float sigmatauxEr,int choix1,int choix2,float & moymtauxErRef,float & moysigmatauxErRef,float & moymtauxconf,float & moyalpha,float & moyalphaconf,float & moykappa,float & moycos_uniforme,float & moydistri_hasard,float & moydistance_distri_hasard,float & distancemoytaux_distri_hasard);
 void affichage_ligne_R(int nbval, string titre, float Tab[]);
 void affiche_res_series(int nbval,float tauxErparAnnot[],float moymtauxErRef[],float moysigmatauxErRef[],float moymtauxconf[],float moyalpha[],float moyalphaconf[],float moykappa[],float moycos_uniforme[],float moydistri_hasard[],float moydistance_distri_hasard[],float distancemoytaux_distri_hasard[]);
-void write_res_series(string corpus, float moykappa[], float moyalpha[], float moymtauxErRef[], float distancemoytaux_distri_hasard[]);
-void serie_expes(string corpus, int nbval,int nb,int nbG,int RefIni[],int nbIt,int nbC,int TE[],float TEIt[][MAXCL],int nbA,float tauxErparAnnot[],float sigmatauxEr,int choix1,int choix2,float moymtauxErRef[],float moysigmatauxErRef[],float moymtauxconf[],float moyalpha[],float moyalphaconf[],float moykappa[],float moycos_uniforme[],float moydistri_hasard[],float moydistance_distri_hasard[],float distancemoytaux_distri_hasard[]);
+void write_res_series(string corpus, int nbval, int nbC, float moykappa[], float moyalpha[], float moymtauxErRef[], float distancemoytaux_distri_hasard[], float distri_classes[]);
+void serie_expes(string corpus, int nbval,int nb,int nbG,int RefIni[],int nbIt,int nbC,int TE[],float TEIt[][MAXCL],int nbA,float tauxErparAnnot[],float sigmatauxEr,int choix1,int choix2,float moymtauxErRef[],float moysigmatauxErRef[],float moymtauxconf[],float moyalpha[],float moyalphaconf[],float moykappa[],float moycos_uniforme[],float moydistri_hasard[],float moydistance_distri_hasard[],float distancemoytaux_distri_hasard[], float distri_classes[]);
 int main(int n, char* param[]);
 
 #endif

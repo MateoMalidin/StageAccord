@@ -750,3 +750,21 @@ int comparefloat (const void * a, const void * b) {
   if (*(float *)a >  *(float *)b)
     return 1;
 }
+
+void distri_classes(int nbC, int nbIt, int nbAR, int T[MAXIT][MAXA], float distri_classes[]) {
+  for (int c = 0; c < nbC; c++) {
+    distri_classes[c] = 0.0;
+  }
+  for (int it = 0; it < nbIt; it++) {
+    for (int ar = 0; ar < nbAR; ar++) {
+      distri_classes[T[it][ar]] += 1.0;
+    }
+  }
+  float sum = 0.0;
+  for (int c = 0; c < nbC; c++) {
+    sum += distri_classes[c];
+  }
+  for (int c = 0; c < nbC; c++) {
+    distri_classes[c] = distri_classes[c] / sum;
+  }
+}
