@@ -503,8 +503,8 @@ void write_res_series(string corpus, int nbval, int nbC, float moykappa[], float
     for (int nb = 0; nb < nbval; nb++) {
       file1 << moykappa[nb] << "," << moymtauxErRef[nb]  << endl;
       file2 << moyalpha[nb] << "," << moymtauxErRef[nb] << endl;
-      file3 << (moyalpha[nb] * (1 - (distancemoytaux_distri_hasard[nb] * pow(correction(nbC, distri_classes), correction(nbC, distri_classes))))) << "," << ((moymtauxErRef[nb])) << endl;
-      file4 << (moykappa[nb] * (1 - (distancemoytaux_distri_hasard[nb] * pow(correction(nbC, distri_classes), correction(nbC, distri_classes))))) << "," << ((moymtauxErRef[nb])) << endl;
+      file3 << ((moyalpha[nb] * (exp(distancemoytaux_distri_hasard[nb])) / exp(correction(nbC, distri_classes)))) << "," << ((moymtauxErRef[nb])) << endl;
+      file4 << ((moykappa[nb] * (exp(distancemoytaux_distri_hasard[nb])) / exp(correction(nbC, distri_classes)))) << "," << ((moymtauxErRef[nb])) << endl;
     }
   }
   else
@@ -517,6 +517,7 @@ void serie_expes(string corpus, int nbval, int nb, int nbG, int RefIni[], int nb
     cout << "test = " << i << endl;
     nbfois_unplusnbGgroupe(nb, nbG, RefIni, nbIt, nbC, TE, TEIt, nbA, tauxErparAnnot[i], sigmatauxEr, choix1, choix2, moymtauxErRef[i], moysigmatauxErRef[i], moymtauxconf[i], moyalpha[i], moyalphaconf[i], moykappa[i], moycos_uniforme[i], moydistri_hasard[i], moydistance_distri_hasard[i], distancemoytaux_distri_hasard[i]);
   }
+  //normalise(distancemoytaux_distri_hasard, nbval);
   affiche_res_series(nbval, tauxErparAnnot, moymtauxErRef, moysigmatauxErRef, moymtauxconf, moyalpha, moyalphaconf, moykappa, moycos_uniforme, moydistri_hasard, moydistance_distri_hasard, distancemoytaux_distri_hasard);
   write_res_series(corpus, nbval, nbC, moykappa, moyalpha, moymtauxErRef, distancemoytaux_distri_hasard, distri_classes);
 }
@@ -524,14 +525,16 @@ void serie_expes(string corpus, int nbval, int nb, int nbG, int RefIni[], int nb
 int main(int n, char * param[]) {
   string arg = param[1];
   int size;
-  string args[] = {"", "", "", "", ""};
+  string args[] = {"", "", "", "", "", "", ""};
   if (arg == "all") {
-    size = 5;
+    size = 7;
     args[0] = "coref";
     args[1] = "similarite";
     args[2] = "opinion";
     args[3] = "emotion";
     args[4] = "newsletter";
+    args[5] = "soutenu";
+    args[6] = "familier";
   }
   else {
     size = 1;
@@ -611,8 +614,8 @@ int main(int n, char * param[]) {
     // fin pour tester
     //float TabtauxErparAnnot[12]={0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.6,0.7};
     int nbtests = 10;
-    //float TabtauxErparAnnot[] = {0.075, 0.1, 0.125, 0.15, 0.175, 0.2, 0.25, 0.3, 0.35, 0.4};
-    float TabtauxErparAnnot[] = {0.075, 0.085, 0.095, 0.105, 0.115, 0.125, 0.235, 0.245, 0.255, 0.265};
+    float TabtauxErparAnnot[] = {0.075, 0.1, 0.125, 0.15, 0.175, 0.2, 0.25, 0.3, 0.35, 0.4};
+    //float TabtauxErparAnnot[] = {0.075, 0.1, 0.125, 0.15, 0.1175, 0.2, 0.2225, 0.25, 0.275, 0.3};
     float moymtauxErRef[nbtests], moysigmatauxErRef[nbtests], moymtauxconf[nbtests], moyalpha[nbtests], moyalphaconf[nbtests], moykappa[nbtests], moycos_uniforme[nbtests], moydistri_hasard[nbtests], moydistance_distri_hasard[nbtests], distancemoytaux_distri_hasard[nbtests];
     serie_expes(args[c], nbtests,nb, nbG, Ref, nbIt, nbC, TE, TEIt, nbA, TabtauxErparAnnot, sigmatauxEr, choix1, choix2,moymtauxErRef, moysigmatauxErRef, moymtauxconf, moyalpha, moyalphaconf, moykappa, moycos_uniforme, moydistri_hasard, moydistance_distri_hasard, distancemoytaux_distri_hasard, vect_classes);
     c++;
