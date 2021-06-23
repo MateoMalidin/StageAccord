@@ -477,7 +477,7 @@ float chi2_vect_reel(float v1[], float v2[], int nbIt) {
 }
 
 // Kullback-Leibler Divergence
-float KL_vect_entier(int v1[], int v2[], int nbIt) {
+float KL_vect_reel(float v1[], float v2[], int nbIt) {
   float sum;
   for (int it = 0; it < nbIt; it++) {
     if (v2[it] != 0)
@@ -487,7 +487,7 @@ float KL_vect_entier(int v1[], int v2[], int nbIt) {
 }
 
 // Jeffreys distance
-float Jeffrey_vect_entier(int v1[], int v2[], int nbIt) {
+float Jeffrey_vect_reel(float v1[], float v2[], int nbIt) {
   float sum;
   for (int it = 0; it < nbIt; it++) {
     sum += (sqrt(v1[it]) - sqrt(v2[it])) * (sqrt(v1[it]) - sqrt(v2[it]));
@@ -496,8 +496,8 @@ float Jeffrey_vect_entier(int v1[], int v2[], int nbIt) {
 }
 
 // symetric divergence
-float sym_vect_entier(int v1[],int v2[],int nbIt) {
-  return KL_vect_entier(v1, v2, nbIt) + KL_vect_entier(v2, v1, nbIt);
+float sym_vect_reel(float v1[],float v2[],int nbIt) {
+  return KL_vect_reel(v1, v2, nbIt) + KL_vect_reel(v2, v1, nbIt);
 }
 
 // J-Divergence
@@ -520,7 +520,7 @@ float H_vect_reel(float v1[], float v2[], int nbIt) {
 }
 
 // Bhattacharyya distance
-float B_vect_entier(int v1[],int v2[],int nbIt) {
+float B_vect_reel(float v1[],float v2[],int nbIt) {
   float sum;
   for (int it = 0; it < nbIt; it++) {
     sum += sqrt(v1[it] * v2[it]);
@@ -547,7 +547,7 @@ float man_vect_entier(int v1[], int v2[], int nbIt) {
 }
 
 // variation totale
-float totvar_vect_entier(int v1[], int v2[], int nbIt) {
+float totvar_vect_reel(float v1[], float v2[], int nbIt) {
   float sum;
   for (int it = 0; it < nbIt; it++) {
     sum += abs(v1[it] - v2[it]);
@@ -629,7 +629,7 @@ void KL_distri_item(int TA[MAXIT][MAXA], int nbA, int nbIt, int nbC, float & dis
 //     2 - vecteur observé dans l'annotation réelle
 float distance_taux_distri_hasard(int T[MAXIT][MAXA], int nbA, int nbIt, int nbC) {
   if ((nbC == 5) && (nbA == 5)) {
-    float Tcomb[7] = {1.0, 20.0, 40.0, 120.0, 180.0, 240.0, 24.0};
+    float Tcomb[7] = {0.0016, 0.032, 0.064, 0.192, 0.288, 0.384, 0.0384};
     float Treel[7] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
     int Tval[7] = {0, 4, 6, 7, 8, 9, 10};
     for (int it = 0; it < nbIt; it++) {
@@ -645,21 +645,49 @@ float distance_taux_distri_hasard(int T[MAXIT][MAXA], int nbA, int nbIt, int nbC
         else
           (Treel[ind])++;
     }
-    float sumComb = 0.0, sumReel = 0.0;
+    float sumReel = 0.0;
     for (int it = 0; it < 7; it++) {
-      sumComb += Tcomb[it];
       sumReel += Treel[it];
     }
     for (int it = 0; it < 7; it++) {
-      Tcomb[it] = Tcomb[it] / sumComb;
-      cout << " | " << Tcomb[it] << " | ";
       Treel[it] = Treel[it] / sumReel;
+      cout << " | " << Treel[it] << " | ";
     }
     cout << endl;
-    return H_vect_reel(Tcomb, Treel, 7);
+    return totvar_vect_reel(Tcomb, Treel, 7);
   }
   else {
-    cout << "pas de calcul prévu pour distance_taux_distri_hasard\n ";
-    return 0;
+    if ((nbC == 3) && (nbA == 5)) {
+      float Tcomb[5] = {0.0123, 0.1235, 0.2469, 0.2469, 0.3704};
+      float Treel[5] = {0.0, 0.0, 0.0, 0.0, 0.0};
+      int Tval[5] = {0, 4, 6, 7, 8};
+      for (int it = 0; it < nbIt; it++) {
+        int nbdes = 0;
+        for (int a1 = 0; a1 < nbA; a1++)
+          for (int a2 = a1 + 1; a2 < nbA; a2++)
+            if (T[it][a1] != T[it][a2])
+              nbdes++;
+        int ind = 0;
+        while ((ind < 5) && (nbdes > Tval[ind])) ind++;
+          if (ind >= 5)
+            cout << "bug distance_taux_distri_hasard\n";
+          else
+            (Treel[ind])++;
+      }
+      float sumReel = 0.0;
+      for (int it = 0; it < 5; it++) {
+        sumReel += Treel[it];
+      }
+      for (int it = 0; it < 5; it++) {
+        Treel[it] = Treel[it] / sumReel;
+        cout << " | " << Treel[it] << " | ";
+      }
+      cout << endl;
+      return totvar_vect_reel(Tcomb, Treel, 5);
+    }
+    else {
+      cout << "pas de calcul prévu pour distance_taux_distri_hasard\n ";
+      return 0;
+    }
   }
 }

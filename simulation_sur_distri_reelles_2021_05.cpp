@@ -383,7 +383,9 @@ float correction(int nbC, float distri_classes[]) {
   for (int c = 0; c < nbC; c++) {
     distri_hasard[c] = 1.0 / nbC;
   }
-  return H_vect_reel(distri_classes, distri_hasard, nbC);
+  float res = totvar_vect_reel(distri_classes, distri_hasard, nbC);
+  cout << "correction : " << res << endl;
+  return res;
 }
 
 void unplusnbGgroupe(int nbG, int RefIni[], int nbIt, int nbC, int TE[], float TEIt[][MAXCL], int nbA, float tauxErparAnnot, float sigmatauxEr, int choix1, int choix2, float & mtauxErRef, float & sigmatauxErRef, float & mtauxconf, float & alphaR, float & alphaconf, float & kappa, float & cos_uniforme, float & distri_hasard, float & distance_distri_hasard, float & distancetaux_distri_hasard) {
@@ -396,6 +398,13 @@ void unplusnbGgroupe(int nbG, int RefIni[], int nbIt, int nbC, int TE[], float T
   //tables de confusion normalisées avec et sans la diagonale
   float Tdist[MAXCL][MAXCL], Tdist2[MAXCL][MAXCL];
   annotations1groupe(RefIni, nbIt,nbC, TE, TEIt, nbA, moyA, sigmaA, TA, RefA, choix1, choix2);
+  cout << "TA :" << endl;
+  /*for (int it = 0; it < nbIt; it++) {
+    for (int a = 0; a < nbA; a++)
+      cout << "|" << TA[it][a] << "|";
+    cout << endl;
+  }
+  cout << "\n\n";*/
   ajout_un(TA, nbIt, nbA, TA1); //classes numérotées de 1 à N
   alphaR = alpha(TA1, nbIt, nbA, nbC);
   transpose(TA, TTA, nbIt, nbA);
@@ -501,10 +510,10 @@ void write_res_series(string corpus, int nbval, int nbC, float moykappa[], float
     file3 << "alphaHP,taux" << endl;
     file4 << "kappaHP,taux" << endl;
     for (int nb = 0; nb < nbval; nb++) {
-      file1 << moykappa[nb] << "," << moymtauxErRef[nb]  << endl;
+      file1 << moykappa[nb] << "," << moymtauxErRef[nb] << endl;
       file2 << moyalpha[nb] << "," << moymtauxErRef[nb] << endl;
-      file3 << ((moyalpha[nb] * (exp(distancemoytaux_distri_hasard[nb])) / exp(correction(nbC, distri_classes)))) << "," << ((moymtauxErRef[nb])) << endl;
-      file4 << ((moykappa[nb] * (exp(distancemoytaux_distri_hasard[nb])) / exp(correction(nbC, distri_classes)))) << "," << ((moymtauxErRef[nb])) << endl;
+      file3 << (moyalpha[nb] * (distancemoytaux_distri_hasard[nb]) / pow(1 - correction(nbC, distri_classes), (1.0/3.0))) << "," << moymtauxErRef[nb] << endl;
+      file4 << (moykappa[nb] * (distancemoytaux_distri_hasard[nb]) / pow(1 - correction(nbC, distri_classes), (1.0/3.0))) << "," << moymtauxErRef[nb] << endl;
     }
   }
   else
@@ -525,16 +534,15 @@ void serie_expes(string corpus, int nbval, int nb, int nbG, int RefIni[], int nb
 int main(int n, char * param[]) {
   string arg = param[1];
   int size;
-  string args[] = {"", "", "", "", "", "", ""};
+  string args[] = {"", "", "", "", "", ""};
   if (arg == "all") {
-    size = 7;
+    size = 5;
     args[0] = "coref";
     args[1] = "similarite";
     args[2] = "opinion";
     args[3] = "emotion";
     args[4] = "newsletter";
-    args[5] = "soutenu";
-    args[6] = "familier";
+    //args[5] = "registre";
   }
   else {
     size = 1;
@@ -615,7 +623,7 @@ int main(int n, char * param[]) {
     //float TabtauxErparAnnot[12]={0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.6,0.7};
     int nbtests = 10;
     float TabtauxErparAnnot[] = {0.075, 0.1, 0.125, 0.15, 0.175, 0.2, 0.25, 0.3, 0.35, 0.4};
-    //float TabtauxErparAnnot[] = {0.075, 0.1, 0.125, 0.15, 0.1175, 0.2, 0.2225, 0.25, 0.275, 0.3};
+    //float TabtauxErparAnnot[] = {0.075, 0.1, 0.125, 0.15, 0.1175, 0.2, 0.2225, 0.25, 0.275, 0.3, 0.325, 0.350, 0.375, 0.4};
     float moymtauxErRef[nbtests], moysigmatauxErRef[nbtests], moymtauxconf[nbtests], moyalpha[nbtests], moyalphaconf[nbtests], moykappa[nbtests], moycos_uniforme[nbtests], moydistri_hasard[nbtests], moydistance_distri_hasard[nbtests], distancemoytaux_distri_hasard[nbtests];
     serie_expes(args[c], nbtests,nb, nbG, Ref, nbIt, nbC, TE, TEIt, nbA, TabtauxErparAnnot, sigmatauxEr, choix1, choix2,moymtauxErRef, moysigmatauxErRef, moymtauxconf, moyalpha, moyalphaconf, moykappa, moycos_uniforme, moydistri_hasard, moydistance_distri_hasard, distancemoytaux_distri_hasard, vect_classes);
     c++;

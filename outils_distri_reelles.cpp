@@ -476,17 +476,12 @@ void lecture_corpus(string corpus, int & nbC, int & nbAR, int & nbIt, int T[MAXI
                   lirenews(T, nbAR, nbIt, nbC);
 		            }
 		            else
-                  if (corpus == "soutenu") {
-                    cout << "soutenu\n";
-                    lire("./corpus/annotation_lannionS.txt", T, nbAR, nbIt);
+                  if (corpus == "registre") {
+                    cout << "registre\n";
+                    lire2("./corpus/annotation_registre.txt", T, nbAR, nbIt);
                   }
                   else
-                    if (corpus == "familier") {
-                      cout << "familier\n";
-                      lire("./corpus/annotation_lannionF.txt", T, nbAR, nbIt);
-                    }
-                    else
-                      cout << "erreur nom corpus\n";
+                    cout << "erreur nom corpus\n";
 	            }
             }
           }
