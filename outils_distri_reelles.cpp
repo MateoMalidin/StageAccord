@@ -440,6 +440,7 @@ void lecture_corpus(string corpus, int & nbC, int & nbAR, int & nbIt, int T[MAXI
     if (corpus == "opinion") {
       cout << "opinion\n" ;
       lire("./corpus/annotation_opinion.txt", T, nbAR, nbIt);
+      nbAR = 25;
     }
     else {
       if (corpus == "conq_spat") {
@@ -468,7 +469,6 @@ void lecture_corpus(string corpus, int & nbC, int & nbAR, int & nbIt, int T[MAXI
               if (corpus == "istex9") {
                 cout << "istex9\n";
                 lireistex(T, 9, nbAR, nbIt, nbC);
-                nbAR = 8;
               }
 	            else {
 		            if (corpus == "newsletter") {
@@ -478,7 +478,8 @@ void lecture_corpus(string corpus, int & nbC, int & nbAR, int & nbIt, int T[MAXI
 		            else
                   if (corpus == "registre") {
                     cout << "registre\n";
-                    lire2("./corpus/annotation_registre.txt", T, nbAR, nbIt);
+                    lire2("./corpus/annotation_registre2.txt", T, nbAR, nbIt);
+                    nbAR = 3;
                   }
                   else
                     cout << "erreur nom corpus\n";

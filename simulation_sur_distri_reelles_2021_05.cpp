@@ -498,8 +498,8 @@ void affiche_res_series(int nbval, float tauxErparAnnot[], float moymtauxErRef[]
 void write_res_series(string corpus, int nbval, int nbC, float moykappa[], float moyalpha[], float moymtauxErRef[], float distancemoytaux_distri_hasard[], float distri_classes[]) {
   string nomfich1 = "./res/kappa_" + corpus + ".csv";
   string nomfich2 = "./res/alpha_" + corpus + ".csv";
-  string nomfich3 = "./res/alphaHP_" + corpus + ".csv";
-  string nomfich4 = "./res/kappaHP_" + corpus + ".csv";
+  string nomfich3 = "./res/alphaTV_" + corpus + ".csv";
+  string nomfich4 = "./res/kappaTV_" + corpus + ".csv";
   ofstream file1(nomfich1.c_str());
   ofstream file2(nomfich2.c_str());
   ofstream file3(nomfich3.c_str());
@@ -507,13 +507,13 @@ void write_res_series(string corpus, int nbval, int nbC, float moykappa[], float
   if (file1 && file2 && file3 && file4) {
     file1 << "kappa,taux" << endl;
     file2 << "alpha,taux" << endl;
-    file3 << "alphaHP,taux" << endl;
-    file4 << "kappaHP,taux" << endl;
+    file3 << "alphaTV,taux" << endl;
+    file4 << "kappaTV,taux" << endl;
     for (int nb = 0; nb < nbval; nb++) {
       file1 << moykappa[nb] << "," << moymtauxErRef[nb] << endl;
       file2 << moyalpha[nb] << "," << moymtauxErRef[nb] << endl;
-      file3 << (moyalpha[nb] * (distancemoytaux_distri_hasard[nb]) / pow(1 - correction(nbC, distri_classes), (1.0/3.0))) << "," << moymtauxErRef[nb] << endl;
-      file4 << (moykappa[nb] * (distancemoytaux_distri_hasard[nb]) / pow(1 - correction(nbC, distri_classes), (1.0/3.0))) << "," << moymtauxErRef[nb] << endl;
+      file3 << (moyalpha[nb] * ((1 - correction(nbC, distri_classes)))) << "," << moymtauxErRef[nb] << endl;
+      file4 << (moykappa[nb] * ((1 - correction(nbC, distri_classes)))) << "," << moymtauxErRef[nb] << endl;
     }
   }
   else
@@ -549,10 +549,12 @@ int main(int n, char * param[]) {
     args[0] = arg;
   }
   int c = 0;
+  float stats[size];
   while (c < size && args[c] != "") {
     int nbC = 5; //nb de classes d'annotation ; 5 par défaut ; modifier à 9 pour les entités nommées à 3 éventuellement pour opinion et émotion
     srand(time(NULL));
     int T[MAXIT][MAXA]; //le tableau des annotations : une ligne par observable annoté
+    int TT[MAXA][MAXIT];
     int nbAR = 0, nbIt = 0; //nb d'annotateurs réels et nb d'observables
     int nbA = 5; //nb d'annotateurs dans les groupes simulés
     //LECTURE 5 classes
@@ -561,6 +563,12 @@ int main(int n, char * param[]) {
     //CALCULS SUR DISTRI Réelles
     float vect_classes[nbC];
     distri_classes(nbC, nbIt, nbAR, T, vect_classes);
+    /*
+    transpose(T, TT, nbIt, nbAR);
+    float kappa = kappaAP(nbIt, nbC, nbAR, TT);
+    cout << "kappa : " << kappa << endl;
+    stats[c] = kappa;
+    */
     int Ref[MAXIT];
     int TE[MAXIT]; //le nombre d'erreurs par item
     float TEIt[MAXIT][MAXCL]; // le tableau du %tage d'erreurs par classe
@@ -579,7 +587,7 @@ int main(int n, char * param[]) {
     //affichage distances annotations réelles
     float SLignes[nbC], SCol[nbC], Sdiag;
     SLSC(Tdist, nbC, SLignes, SCol, Sdiag);
-    /* //affichage confusion
+     //affichage confusion
     cout << "tableau confusion entre classes\n";
     for (int c1=0;c1<nbC;c1++) {
       for (int c2=0;c2<nbC;c2++)
@@ -589,7 +597,7 @@ int main(int n, char * param[]) {
     for (int c2=0;c2<nbC;c2++) printf(" ----- ") ; cout << endl;
       for (int c2=0;c2<nbC;c2++) printf("%.6f ",SLignes[c2]);
       printf(" | %.6f\n",Sdiag);
-      */
+
     float sim_uniforme, moy, sigma;
     int nbdesa = 0;
     mesuresrepartitiondesaccords(TConfusion, T, nbC, nbIt, nbAR, sim_uniforme, moy, sigma);
@@ -626,7 +634,13 @@ int main(int n, char * param[]) {
     //float TabtauxErparAnnot[] = {0.075, 0.1, 0.125, 0.15, 0.1175, 0.2, 0.2225, 0.25, 0.275, 0.3, 0.325, 0.350, 0.375, 0.4};
     float moymtauxErRef[nbtests], moysigmatauxErRef[nbtests], moymtauxconf[nbtests], moyalpha[nbtests], moyalphaconf[nbtests], moykappa[nbtests], moycos_uniforme[nbtests], moydistri_hasard[nbtests], moydistance_distri_hasard[nbtests], distancemoytaux_distri_hasard[nbtests];
     serie_expes(args[c], nbtests,nb, nbG, Ref, nbIt, nbC, TE, TEIt, nbA, TabtauxErparAnnot, sigmatauxEr, choix1, choix2,moymtauxErRef, moysigmatauxErRef, moymtauxconf, moyalpha, moyalphaconf, moykappa, moycos_uniforme, moydistri_hasard, moydistance_distri_hasard, distancemoytaux_distri_hasard, vect_classes);
+
     c++;
-  }
+  }/*
+  string nomfich = "./res/stats.txt";
+  ofstream file(nomfich.c_str());
+  for (int i = 0; i < size; i++) {
+    file << args[i] << " : " << stats[i] << endl;
+  }*/
   return 0;
 }
