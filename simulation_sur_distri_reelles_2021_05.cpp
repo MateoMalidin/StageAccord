@@ -512,8 +512,8 @@ void write_res_series(string corpus, int nbval, int nbC, float moykappa[], float
     for (int nb = 0; nb < nbval; nb++) {
       file1 << moykappa[nb] << "," << moymtauxErRef[nb] << endl;
       file2 << moyalpha[nb] << "," << moymtauxErRef[nb] << endl;
-      file3 << (moyalpha[nb] * ((1 - correction(nbC, distri_classes)))) << "," << moymtauxErRef[nb] << endl;
-      file4 << (moykappa[nb] * ((1 - correction(nbC, distri_classes)))) << "," << moymtauxErRef[nb] << endl;
+      file3 << (moyalpha[nb] * pow((distancemoytaux_distri_hasard[nb]) / (1 - correction(nbC, distri_classes)), 1.0/3.0)) << "," << moymtauxErRef[nb] << endl;
+      file4 << (moykappa[nb] * pow((distancemoytaux_distri_hasard[nb]) / (1 - correction(nbC, distri_classes)), 1.0/3.0)) << "," << moymtauxErRef[nb] << endl;
     }
   }
   else

@@ -654,7 +654,7 @@ float distance_taux_distri_hasard(int T[MAXIT][MAXA], int nbA, int nbIt, int nbC
       cout << " | " << Treel[it] << " | ";
     }
     cout << endl;
-    return H_vect_reel(Tcomb, Treel, 7);
+    return totvar_vect_reel(Tcomb, Treel, 7);
   }
   else {
     if ((nbC == 3) && (nbA == 5)) {
