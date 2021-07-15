@@ -1,5 +1,6 @@
-import matplotlib.pyplot as plt
 import math
+import sys
+import random
 
 
 # lecture du corpus
@@ -17,7 +18,7 @@ def lecture(corpus, T):
         tab = line.split('\t') # tableau contenant les elements de la ligne courante
         i = [] # tableau des elements de la ligne courante nettoyes
         for t in tab:
-            if t != '\n':
+            if t != '\n' and t != '':
                 i.append(int(t))
         T.append(i)
 
@@ -45,7 +46,7 @@ def Cl(T, c):
 # - t : le tableau d'annotation (lignes = annotateurs, colonnes = items)
 
 def transpose(T):
-    t = [[0 for i in range(len(T))] for j in range(len(T[1]))] # le tableau qui contiendra la transpose de l'annotation
+    t = [[0 for i in range(len(T))] for j in range(len(T[0]))] # le tableau qui contiendra la transposee de l'annotation
     for i in range(len(T)):
         for j in range(len(T[i])):
             t[j][i] = T[i][j] # transposition
@@ -192,7 +193,7 @@ def Ref(T, C, R):
         R.append(cmaj) # reference pour le i-eme item
 
 
-# simulation des groupes de 5 annotateurs
+# simulation des groupes de 3 annotateurs
 # parametres :
 # - T : la matrice d'annotation
 # - C : l'ensemble des classes
@@ -203,20 +204,18 @@ def Ref(T, C, R):
 def Refi(T, C, Ri):
     I = len(T[0]) # nombre d'items
     J = len(T) # nombre d'annotateurs
-    # pour toutes les combinaisons de 5 annotateurs
-    for j1 in range(J-4): # annotateur 1
-        for j2 in range(j1 + 1, J-3): # annotateur 2
-            for j3 in range(j2 + 1, J-2): # annotateur 3
-                for j4 in range(j3 + 1, J-1): # annotateur 4
-                    for j5 in range(j4 + 1, J): # annotateur 5
-                        annot = [] # annotation du groupe
-                        for i in range(I): # parcours des items
-                            annotitem = [T[j1][i], T[j2][i], T[j3][i], T[j4][i], T[j5][i]] # annotation du groupe courant pour le i-eme item
-                            annot.append(annotitem) # ajout a l'annotation du groupe
-                        Tannot = transpose(annot) # tansposee de l'annotation
-                        ri = [] # annotation de reference produite par le groupe courant
-                        Ref(Tannot, C, ri) # definition de la reference du groupe
-                        Ri.append(ri)
+    nb = 1000 # nombre de groupes a simule
+    # pour les nb groupes
+    for n in range(nb):
+        g = random.sample(range(J), 3) # generation du groupe
+        annot = [] # annotation du groupe
+        for i in range(I): # parcours des items
+            annotitem = [T[g[0]][i], T[g[1]][i], T[g[2]][i]] # annotation du groupe courant pour le i-eme item
+            annot.append(annotitem) # ajout a l'annotation du groupe
+            Tannot = transpose(annot) # tansposee de l'annotation
+        ri = [] # annotation de reference produite par le groupe courant
+        Ref(Tannot, C, ri) # definition de la reference du groupe
+        Ri.append(ri)
 
 
 # taux de variation de la reference
@@ -228,38 +227,112 @@ def Refi(T, C, Ri):
 def taux(Ri):
     nbG = len(Ri) # nombre de groupes
     nbP = math.factorial(nbG) / (math.factorial(2) * math.factorial(nbG - 2))
-    sum = 0.0
+    tg = 0.0
     # pour toutes les paires de references
     for r1 in range(nbG - 1): # reference 1
         for r2 in range(r1 + 1, nbG): # reference 2
+            ti = 0.0 # taux de variation courant
             for i in range(len(Ri[r1])): # parcours des items
                 if Ri[r1][i] != Ri[r2][i]:
-                    sum += 1.0
-    return sum / nbP
+                    ti += 1.0
+            tg += ti / len(Ri[r1])
+    return tg / nbP
+
+
+# distribution des classes
+# parametres :
+# - T : la matrice d'annotation
+# - C : l'ensemble des classes
+# sorties :
+# - distri : la distribution des classes dans l'annotation
+
+def distriC(T, C):
+    distri = len(C)*[0]
+    for j in range(len(T)):
+        for i in range(len(T[0])):
+            distri[C.index(T[j][i])] += 1
+    for i in range(len(distri)):
+        distri[i] = round(distri[i] / (len(T)*len(T[0])), 2)
+    return distri
+
+
+# distribution des desaccords entre annotateurs
+# parametres :
+# - T : la matrice d'annotation
+# sortie :
+# - distri : la distribution des desaccords entre annotateurs
+
+def distriD(T):
+    tval = [] # tableau des nombres de desaccords
+    teff = [] # tableau des effectifs de chaque nombre de desaccord
+    for i in range(len(T[0])): # pour chaque item
+        cpt = 0 # nombre de paires en desaccord
+        # pour chaque paire d'annotateurs
+        for j1 in range(len(T) - 1): # annotateur 1
+            for j2 in range(j1 + 1, len(T)): # annotitateur 2
+                if T[j1][i] != T[j2][i]:
+                    cpt += 1
+        if cpt in tval:
+            teff[tval.index(cpt)] += 1.0
+        else:
+            tval.append(cpt)
+            teff.append(1.0)
+        # normalisation
+        sum = 0.0
+        for d in range(len(teff)):
+            sum += teff[d]
+        for d in range(len(teff)):
+            teff[d] = round(teff[d] / sum, 3)
+    return [tval, teff]
 
 
 ##### programme principal #####
 
 
-# tableau contenant les chemins vers les fichiers
-corpus = ["annotation_typage_coreference.txt", "annotation_opinion.txt", "annotation_emotion.txt", "annotation_registre.txt"]
+param = str(sys.argv[1])
 
-for f in corpus: # parcours des fichiers
-    T = [] # matrice d'annotation
-    c = [] # ensemble des classes
-    R = [] # annotation de reference
-    Ri = [] # ensemble des references des groupes simules
-    lecture(f, T) # lecture du corpus
-    if len(T) > len(T[0]): # si la matrice d'annotation n'est pas dans le bon format
-        t = transpose(T) # transposition de la matrice d'annotation
-        Cl(t, c) # generation de l'ensemble des classes
-        k = kappa(t, c) # calcul du kappa de Fleiss sur le fichier courant
-        Refi(t, c, Ri) # definition de l'ensemble des references des groupes simules
-    else: # si la matrice d'annotation est dans le bon format
-        Cl(T, c) # generation de l'ensemble des classes
-        k = kappa(T, c) # calcul du kappa de Fleiss sur le fichier courant
-        Refi(T, c, Ri) # definition de l'ensemble des references des groupes simules
-    print(f, ' :')
-    print(' k = ', round(k, 2))
-    v = taux(Ri)
-    print(' taux = ', round(v, 2))
+f = ""
+if param == "coref":
+    f = "annotations_coref1_2021.txt"
+elif param == "similarite":
+    f = "annotation_similarite.txt"
+elif param == "opinion":
+    f = "annotation_opinion.txt"
+elif param == "emotion":
+    f = "annotation_emotion.txt"
+elif param == "newsletter":
+    f = "annotation_newsletter.txt"
+elif param == "registre":
+    f = "annotation_registre2.txt"
+
+T = [] # matrice d'annotation
+c = [] # ensemble des classes
+R = [] # annotation de reference
+Ri = [] # ensemble des references des groupes simules
+
+lecture(f, T) # lecture du corpus
+
+if len(T) > len(T[0]): # si la matrice d'annotation n'est pas dans le bon format
+    t = transpose(T) # transposition de la matrice d'annotation
+    Cl(t, c) # generation de l'ensemble des classes
+    k = kappa(t, c) # calcul du kappa de Fleiss sur le fichier courant
+    Refi(t, c, Ri) # definition de l'ensemble des references des groupes simules
+    distric = distriC(t, c)
+    distrid = distriD(t)
+else: # si la matrice d'annotation est dans le bon format
+    Cl(T, c) # generation de l'ensemble des classes
+    k = kappa(T, c) # calcul du kappa de Fleiss sur le fichier courant
+    Refi(T, c, Ri) # definition de l'ensemble des references des groupes simules
+    distric = distriC(T, c)
+    distrid = distriD(T)
+print(param, ' :')
+print(' k = ', round(k, 2))
+v = taux(Ri)
+print(' taux = ', round(v, 2))
+print('c : ', c)
+print('distri_classes : ', distric)
+print('distri_desaccords : ', distrid)
+file = open(param + '_res_brute.csv', 'w')
+file.write(str(k))
+file.write(',')
+file.write(str(v))
