@@ -1,11 +1,11 @@
-# AccordInterAnnotateur
+# Accord Inter-Annotateur
 
-Contenu du dépot :
+Contenu du dépôt :
 ------------------------------
 
-Corpus : répertoir contenant les fichiers d'annotation utilisés
+Corpus : répertoire contenant les fichiers d'annotation utilisés
 
-Scripts : répertoir contenant différents programmes :
+Scripts : répertoire contenant différents programmes :
 - kappa.py et kappadistance.py : outils de visualisation des résultats simulés sous la forme de courbes
 - perf.py : outil d'interpolation et de calcul de l'écart maximal entre les courbes des différents corpus
 - optimisation.py : outil de calcul de l'accord inter-annotateur (kappa de Fleiss) et du taux de variation d'une annotation de référence à partir de données réelles
@@ -13,7 +13,7 @@ Scripts : répertoir contenant différents programmes :
 
 Outil de simulation :
 - fichiers de code : *.cpp
-- fichiers d'entete : *.hpp
+- fichiers d'entête : *.hpp
 
 Mode d'emploi :
 ------------------------------
