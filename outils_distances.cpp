@@ -347,7 +347,14 @@ void vect_desaccords_annotation_aleatoire(int nbA, int nbIt, int nbC, int Vrand[
 
 //-----DISTANCES ENTRE DISTRIBUTIONS-----
 
-// min(x, y)
+/* min(x, y)
+  parametres :
+  - x : un entier
+  - y : un entier
+  sortie :
+  - si x < y : x
+  - sinon : y
+*/
 int min(int x, int y) {
   if (x <= y)
     return x;
@@ -355,7 +362,13 @@ int min(int x, int y) {
     return y;
 }
 
-// retourne le minimum d'un vecteur
+/* min_vect_reel(v, nbIt)
+  parametres :
+  - v : un vecteur de reels
+  - nbIt : la taille du vecteur v
+  sortie :
+  - le plus petit reel apparaissant dans le vecteur v
+*/
 float min_vect_reel(float v[], int nbIt) {
   float min = v[0];
   for (int it = 1; it < nbIt; it++) {
@@ -365,7 +378,13 @@ float min_vect_reel(float v[], int nbIt) {
   return min;
 }
 
-// retourne le maximum d'un vecteur
+/* max_vect_reel(v, nbIt)
+  parametres :
+  - v : un vecteur de reels
+  - nbIt : la taille du vecteur v
+  sortie :
+  - le plus grand reel apparaissant dans le vecteur v
+*/
 float max_vect_reel(float v[], int nbIt) {
   float max = v[0];
   for (int it = 1; it < nbIt; it++) {
@@ -375,6 +394,13 @@ float max_vect_reel(float v[], int nbIt) {
   return max;
 }
 
+/* moy_vect_reel(v, nbIt)
+  parametres :
+  - v : un vecteur de reels
+  - nbIt : la taille du vecteur v
+  sortie :
+  - la valeur moyenne des coordonnees du vecteur v
+*/
 float moy_vect_reel(float v[], int nbIt) {
   float sum;
   for (int it = 0; it < nbIt; it++) {
@@ -383,7 +409,13 @@ float moy_vect_reel(float v[], int nbIt) {
   return sum / nbIt;
 }
 
-// écart-type d'un vecteur
+/* ecart_type_vect_reel(v, nbIt)
+  parametres :
+  - v : un vecteur de reels
+  - nbIt : la taille du vecteur v
+  sortie :
+  - l'ecart type des coordonnees du vecteur v
+*/
 float ecart_type_vect_reel(float v[], int nbIt) {
   float sum;
   float moy = moy_vect_reel(v, nbIt);
@@ -393,7 +425,13 @@ float ecart_type_vect_reel(float v[], int nbIt) {
   return sqrt((1.0 / nbIt) * sum);
 }
 
-// moyenne d'un vecteur d'entiers
+/* moy_vect_entier(v, nbIt)
+  parametres :
+  - v : un vecteur d'entiers
+  - nbIt : la taille du vecteur v
+  sortie :
+  - la valeur moyenne des coordonnees du vecteur v
+*/
 float moy_vect_entier(int v[], int nbIt) {
   float sum;
   for (int it = 0; it < nbIt; it++) {
@@ -402,7 +440,13 @@ float moy_vect_entier(int v[], int nbIt) {
   return 1.0 * (sum / nbIt);
 }
 
-// moyenne d'un vecteur d'entiers
+/* ecart_type_vect_entier(v, nbIt)
+  parametres :
+  - v : un vecteur d'entiers
+  - nbIt : la taille du vecteur v
+  sortie :
+  - l'ecart type des coordonnees du vecteur v
+*/
 float ecart_type_vect_entier(int v[], int nbIt) {
   float sum;
   float moy = moy_vect_entier(v, nbIt);
@@ -412,7 +456,13 @@ float ecart_type_vect_entier(int v[], int nbIt) {
   return sqrt((1.0 / nbIt) * sum);
 }
 
-// normalise un vecteur
+/* normalise(v, nbIt)
+  parametres :
+  - v : un vecteur de reels
+  - nbIt : la taille du vecteur v
+  action :
+  - normalise le vecteur v (borne entre 0 et 1)
+*/
 void normalise(float v[], int nbIt) {
   for (int it = 0; it < nbIt; it++) {
     v[it] = (v[it] - min_vect_reel(v, nbIt)) / max_vect_reel(v, nbIt);
@@ -431,7 +481,14 @@ float cosinus_vect_entier(int v1[], int v2[], int nbIt) {
   return res;
 }
 
-// histogram intersection
+/* histointersection_vect_entier(v1, v2, nbIt)
+  parametres :
+  - v1 un vecteur d'entiers
+  - v2 un vecteur d'entiers
+  - la taille du vecteur v1 = la taille du vecteur v2
+  sortie :
+  - la distance "histogram intersection" entre les vecteurs v1 et v2 (Bazan et al., 2019)
+*/
 float histointersection_vect_entier(int v1[], int v2[], int nbIt) {
   int num, denom;
   for (int it = 0; it < nbIt; it++) {
@@ -441,7 +498,14 @@ float histointersection_vect_entier(int v1[], int v2[], int nbIt) {
   return 1.0 - (1.0 * (num / denom));
 }
 
-// histogram correlation
+/* histocorrelation_vect_entier(v1, v2, nbIt)
+  parametres :
+  - v1 un vecteur d'entiers
+  - v2 un vecteur d'entiers
+  - la taille du vecteur v1 = la taille du vecteur v2
+  sortie :
+  - la distance "histogram correlation" entre les vecteurs v1 et v2 (Bazan et al., 2019)
+*/
 float histocorrelation_vect_entier(int v1[], int v2[], int nbIt) {
   float num, denom, denom1, denom2, moyv1, moyv2, res;
   moyv1 = moy_vect_entier(v1, nbIt);
@@ -456,7 +520,14 @@ float histocorrelation_vect_entier(int v1[], int v2[], int nbIt) {
   return res;
 }
 
-// chi2 distance
+/* chi2_vect_entier(v1, v2, nbIt)
+  parametres :
+  - v1 un vecteur d'entiers
+  - v2 un vecteur d'entiers
+  - la taille du vecteur v1 = la taille du vecteur v2
+  sortie :
+  - la distance du X2 entre les vecteurs v1 et v2 (Bazan et al., 2019)
+*/
 float chi2_vect_entier(int v1[], int v2[], int nbIt) {
   float sum;
   for (int it = 0; it < nbIt; it++) {
@@ -466,7 +537,14 @@ float chi2_vect_entier(int v1[], int v2[], int nbIt) {
   return 1.0 * sum;
 }
 
-// chi2 distance
+/* chi2_vect_reel(v1, v2, nbIt)
+  parametres :
+  - v1 un vecteur de reels
+  - v2 un vecteur de reels
+  - la taille du vecteur v1 = la taille du vecteur v2
+  sortie :
+  - la distance du X2 entre les vecteurs v1 et v2 (Bazan et al., 2019)
+*/
 float chi2_vect_reel(float v1[], float v2[], int nbIt) {
   float sum;
   for (int it = 0; it < nbIt; it++) {
@@ -476,7 +554,14 @@ float chi2_vect_reel(float v1[], float v2[], int nbIt) {
   return 1.0 * sum;
 }
 
-// Kullback-Leibler Divergence
+/* KL_vect_reel(v1, v2, nbIt)
+  parametres :
+  - v1 un vecteur de reels
+  - v2 un vecteur de reels
+  - la taille du vecteur v1 = la taille du vecteur v2
+  sortie :
+  - la divergence de Kullback-Leibler entre les vecteurs v1 et v2 (Bazan et al., 2019)
+*/
 float KL_vect_reel(float v1[], float v2[], int nbIt) {
   float sum;
   for (int it = 0; it < nbIt; it++) {
@@ -486,7 +571,14 @@ float KL_vect_reel(float v1[], float v2[], int nbIt) {
   return 1.0 * sum;
 }
 
-// Jeffreys distance
+/* Jeffrey_vect_reel(v1, v2, nbIt)
+  parametres :
+  - v1 un vecteur de reels
+  - v2 un vecteur de reels
+  - la taille du vecteur v1 = la taille du vecteur v2
+  sortie :
+  - la distance de Jeffrey entre les vecteurs v1 et v2 (Chung et al., 1987)
+*/
 float Jeffrey_vect_reel(float v1[], float v2[], int nbIt) {
   float sum;
   for (int it = 0; it < nbIt; it++) {
@@ -495,12 +587,26 @@ float Jeffrey_vect_reel(float v1[], float v2[], int nbIt) {
   return 1.0 * sum;
 }
 
-// symetric divergence
+/* sym_vect_reel(v1, v2, nbIt)
+  parametres :
+  - v1 un vecteur de reels
+  - v2 un vecteur de reels
+  - la taille du vecteur v1 = la taille du vecteur v2
+  sortie :
+  - la divergence symetrique entre les vecteurs v1 et v2 (Chung et al., 1987)
+*/
 float sym_vect_reel(float v1[],float v2[],int nbIt) {
   return KL_vect_reel(v1, v2, nbIt) + KL_vect_reel(v2, v1, nbIt);
 }
 
-// J-Divergence
+/* Jdiv_vect_entier_vect_reel(v1, v2, nbIt)
+  parametres :
+  - v1 un vecteur de reels
+  - v2 un vecteur de reels
+  - la taille du vecteur v1 = la taille du vecteur v2
+  sortie :
+  - la J-divervence entre les vecteurs v1 et v2 (Chung et al., 1987)
+*/
 float Jdiv_vect_entier(int v1[],int v2[],int nbIt) {
   float sum;
   for (int it = 0; it < nbIt; it++) {
@@ -510,7 +616,14 @@ float Jdiv_vect_entier(int v1[],int v2[],int nbIt) {
   return 1.0 * sum;
 }
 
-// Hellinger cofficient
+/* H_vect_reel(v1, v2, nbIt)
+  parametres :
+  - v1 un vecteur de reels
+  - v2 un vecteur de reels
+  - la taille du vecteur v1 = la taille du vecteur v2
+  sortie :
+  - la distance de Hellinger entre les vecteurs v1 et v2 (Chung et al., 1987)
+*/
 float H_vect_reel(float v1[], float v2[], int nbIt) {
   float sum;
   for (int it = 0; it < nbIt; it ++) {
@@ -519,7 +632,14 @@ float H_vect_reel(float v1[], float v2[], int nbIt) {
   return 1.0 * sum;
 }
 
-// Bhattacharyya distance
+/* B_vect_reel(v1, v2, nbIt)
+  parametres :
+  - v1 un vecteur de reels
+  - v2 un vecteur de reels
+  - la taille du vecteur v1 = la taille du vecteur v2
+  sortie :
+  - la distance de Bhattacharyya entre les vecteurs v1 et v2
+*/
 float B_vect_reel(float v1[],float v2[],int nbIt) {
   float sum;
   for (int it = 0; it < nbIt; it++) {
@@ -528,7 +648,14 @@ float B_vect_reel(float v1[],float v2[],int nbIt) {
   return (0 - log(sum));
 }
 
-// distance euclidienne
+/* euc_vect_entier(v1, v2, nbIt)
+  parametres :
+  - v1 un vecteur d'entiers
+  - v2 un vecteur d'entiers
+  - la taille du vecteur v1 = la taille du vecteur v2
+  sortie :
+  - la distance euclidienne entre les vecteurs v1 et v2
+*/
 float euc_vect_entier(int v1[], int v2[], int nbIt) {
   float sum;
   for (int it = 0; it < nbIt; it++) {
@@ -537,7 +664,14 @@ float euc_vect_entier(int v1[], int v2[], int nbIt) {
   return 1.0 * sqrt(sum);
 }
 
-// distance de Manhattan
+/* man_vect_entier(v1, v2, nbIt)
+  parametres :
+  - v1 un vecteur d'entiers
+  - v2 un vecteur d'entiers
+  - la taille du vecteur v1 = la taille du vecteur v2
+  sortie :
+  - la distance de manhattan entre les vecteurs v1 et v2
+*/
 float man_vect_entier(int v1[], int v2[], int nbIt) {
   float sum;
   for (int it = 0; it < nbIt; it++) {
@@ -546,7 +680,14 @@ float man_vect_entier(int v1[], int v2[], int nbIt) {
   return 1.0 * sum;
 }
 
-// variation totale
+/* totvar_vect_reel(v1, v2, nbIt)
+  parametres :
+  - v1 un vecteur de reels
+  - v2 un vecteur de reels
+  - la taille du vecteur v1 = la taille du vecteur v2
+  sortie :
+  - la distance en variation totale entre les vecteurs v1 et v2
+*/
 float totvar_vect_reel(float v1[], float v2[], int nbIt) {
   float sum;
   for (int it = 0; it < nbIt; it++) {

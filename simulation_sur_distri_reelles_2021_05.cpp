@@ -374,10 +374,13 @@ void transpose(int T[MAXIT][MAXA], int TT[MAXA][MAXIT], int nbIt, int nbA) {
       TT[j][i] = T[i][j];
 }
 
-/**** fonction du programme principal où est défini le facteur de correction du taux*/////
-
-/* char param[] = nom du corpus */
-
+/* correction(nbC, distri_classes)
+  parametres :
+  - nbC : nombre de classes dans l'annotation
+  - distri_classes : distribution des classes dans l'annotation
+  sortie :
+  - res : distance en variation totale entre la distribution des classes dans l'annotation et la distribution uniforme des classes
+*/
 float correction(int nbC, float distri_classes[]) {
   float distri_hasard[nbC];
   for (int c = 0; c < nbC; c++) {
@@ -495,20 +498,37 @@ void affiche_res_series(int nbval, float tauxErparAnnot[], float moymtauxErRef[]
     printf("%.4f)\n",moymtauxErRef[nbval-1]/moymtauxconf[nbval-1]);*/
 }
 
+/* write_res_series(corpus, nbval, nbC, moykappa, moyalpha, moymtauxErRef, distancemoytaux_distri_hasard, distri_classes)
+  parametres :
+  - corpus : nom du corpus
+  - nbval : nombres de donnees
+  - nbC : nombre de classes dans l'annotation
+  - moykappa : tableau des valeurs de kappa
+  - moyalpha : tableau des valeurs d'alpna
+  - moymtauxErRef : tableau des valeurs de taux de variation de la reference
+  - distancemoytaux_distri_hasard : distances entre distributions, reelle et au hasard, des desaccords entre annotateurs
+  - distri_classes : distribution des classes dans l'annotation
+  action :
+  - sauvegarde l'ensemble des donnees dans des fichiers
+*/
 void write_res_series(string corpus, int nbval, int nbC, float moykappa[], float moyalpha[], float moymtauxErRef[], float distancemoytaux_distri_hasard[], float distri_classes[]) {
+  // mise en forme des noms de fichiers
   string nomfich1 = "./res/kappa_" + corpus + ".csv";
   string nomfich2 = "./res/alpha_" + corpus + ".csv";
   string nomfich3 = "./res/alphaTV_" + corpus + ".csv";
   string nomfich4 = "./res/kappaTV_" + corpus + ".csv";
+  // ouverture des fichiers
   ofstream file1(nomfich1.c_str());
   ofstream file2(nomfich2.c_str());
   ofstream file3(nomfich3.c_str());
   ofstream file4(nomfich4.c_str());
+  // ecriture des entetes des fichiers
   if (file1 && file2 && file3 && file4) {
     file1 << "kappa,taux" << endl;
     file2 << "alpha,taux" << endl;
     file3 << "alphaTV,taux" << endl;
     file4 << "kappaTV,taux" << endl;
+    // ecriture des donnees dans les fichiers
     for (int nb = 0; nb < nbval; nb++) {
       file1 << moykappa[nb] << "," << moymtauxErRef[nb] << endl;
       file2 << moyalpha[nb] << "," << moymtauxErRef[nb] << endl;
@@ -532,10 +552,10 @@ void serie_expes(string corpus, int nbval, int nb, int nbG, int RefIni[], int nb
 }
 
 int main(int n, char * param[]) {
-  string arg = param[1];
-  int size;
-  string args[] = {"", "", "", "", "", ""};
-  if (arg == "all") {
+  string arg = param[1]; // parametre d'invocation
+  int size; // nombre de corpus a traiter
+  string args[] = {"", "", "", "", "", ""}; // noms des corpus
+  if (arg == "all") { // remplissage par tous les noms de corpus
     size = 5;
     args[0] = "coref";
     args[1] = "similarite";
@@ -544,11 +564,11 @@ int main(int n, char * param[]) {
     args[4] = "newsletter";
     //args[5] = "registre";
   }
-  else {
+  else { // remplissage par le nom de corpus passe en parametre
     size = 1;
     args[0] = arg;
   }
-  int c = 0;
+  int c = 0; // pointeur de corpus
   float stats[size];
   while (c < size && args[c] != "") {
     int nbC = 5; //nb de classes d'annotation ; 5 par défaut ; modifier à 9 pour les entités nommées à 3 éventuellement pour opinion et émotion

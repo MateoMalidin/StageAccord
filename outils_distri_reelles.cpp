@@ -757,19 +757,33 @@ int comparefloat (const void * a, const void * b) {
     return 1;
 }
 
+/* distri_classes(nbC, nbIt, nbAR, T, distri_classes)
+  parametres :
+  - nbC : nombre de classes dans l'annotation
+  - nbIt : nombre d'items dans l'annotation
+  - nbAR : nombre d'annotateurs dans l'annotation
+  - T : matrice d'annotation
+  - distri_classes : distribution des classes dans l'annotaiton (a remplir)
+  action :
+  - remplit le tableau distri_classes avec la distribution des classes dans l'annotation
+*/
 void distri_classes(int nbC, int nbIt, int nbAR, int T[MAXIT][MAXA], float distri_classes[]) {
+  // ititialisation du tableau
   for (int c = 0; c < nbC; c++) {
     distri_classes[c] = 0.0;
   }
+  // parcours de l'annotation
   for (int it = 0; it < nbIt; it++) {
     for (int ar = 0; ar < nbAR; ar++) {
-      distri_classes[T[it][ar]] += 1.0;
+      distri_classes[T[it][ar]] += 1.0; // mise a jour de la distribution des classes
     }
   }
+  // calcul de la somme des valeurs dans le tableau
   float sum = 0.0;
   for (int c = 0; c < nbC; c++) {
     sum += distri_classes[c];
   }
+  // normalisation de la distrigution des classes (borne entre 0 et 1)
   for (int c = 0; c < nbC; c++) {
     distri_classes[c] = distri_classes[c] / sum;
   }

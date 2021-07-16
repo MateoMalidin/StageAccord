@@ -1,6 +1,14 @@
+# programme de calcul du kappa de Fleiss et du taux de variation de la reference sur les donnees reelles
 import math
 import sys
 import random
+
+
+### IMPORTANT ###
+# le programme est concu pour travailler sur des annotation sous le format suivant :
+# 1 ligne = 1 annotateur
+# 1 colonne = 1 item (observable)
+# Dans le cas ou un fichier d'entree ne respecte pas ce format, une transposition est realise
 
 
 # lecture du corpus
